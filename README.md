@@ -4,7 +4,7 @@
 
 Initial localization strings (English and French) are available, to customize kick messages.
 
-**ProxyKick.jar** is available in ```/target/ProxyKick.jar```.
+**ProxyKick.jar** is available in Releases section.
 
 ---
 
