@@ -1,0 +1,5 @@
+name: ProxyKick
+version: '${project.version}'
+main: fr.stillcraft.proxykick.ProxyKick
+description: Kicks from Bungee network
+author: Augustin Blanchet
