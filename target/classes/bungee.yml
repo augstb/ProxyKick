@@ -1,0 +1,5 @@
+name: ProxyKick
+version: '1.0'
+main: fr.stillcraft.proxykick.ProxyKick
+description: Kick players from BungeeCord network
+author: Augustin Blanchet
