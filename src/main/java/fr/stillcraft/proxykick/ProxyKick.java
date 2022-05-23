@@ -43,6 +43,8 @@ public final class ProxyKick extends Plugin {
                 file.createNewFile();
                 // Initialize configuration
                 Configuration config = getConfig(fileName);
+
+                // Writing default config values
                 if(fileName.equals("locale_en")){
                     config.set("kicked_string", "&7You have been kicked by &f%sender%");
                     config.set("sender_return", "&7You kicked &f%player%");
@@ -52,8 +54,11 @@ public final class ProxyKick extends Plugin {
                     config.set("console_kicked_string", "&f%player% &7has been kicked by &f%sender%");
                     config.set("not_found", "&cError: &4%player%&c is not online.");
                     config.set("nobody_online", "&cError: nobody is online.");
-                    config.set("help", "&7Usage: &3/kick &b[player name] [message]");
+                    config.set("help", "&7Usage: &3/kick &b[player name] (reason)");
                     config.set("description", "&7Description: Kick player with custom message.");
+                    config.set("permission", "&7You don't have permission to kick players.");
+                    config.set("bypass_message", "&7You can't kick &f%player%&7.");
+                config.set("bypass_warn", "&f%sender% &7tried to kick you.");
                 }
                 if(fileName.equals("locale_fr")){
                     config.set("kicked_string", "&7Vous avez été ejecté par &f%sender%");
@@ -64,8 +69,11 @@ public final class ProxyKick extends Plugin {
                     config.set("console_kicked_string", "&f%player% &7a été éjecté par &f%sender%");
                     config.set("not_found", "&cErreur : &4%player%&c n'est pas connecté.");
                     config.set("nobody_online", "&cErreur : personne n'est connecté.");
-                    config.set("help", "&7Syntaxe : &3/kick &b[player name] [message]");
+                    config.set("help", "&7Syntaxe : &3/kick &b[player name] (raison)");
                     config.set("description", "&7Description : Ejecter un joueur avec un message personnalisé.");
+                    config.set("permission", "&7Vous n'avez pas la permission d'éjecter des joueurs.");
+                    config.set("bypass_message", "&7Vous ne pouvez pas éjecter &f%player%&7.");
+                    config.set("bypass_warn", "&f%sender% &7a essayé de vous éjecter.");
                 }
                 if(fileName.equals("config")){
                     config.set("locale", "en");
