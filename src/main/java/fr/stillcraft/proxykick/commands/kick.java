@@ -103,8 +103,9 @@ public class kick extends Command {
                         sender_return = sender_return.replaceAll("%player%", player.getDisplayName());
                         console_kicked_string = console_kicked_string.replaceAll("%player%", player.getDisplayName());
 
-                        // If player has bypass do not kick and warn player
-                        if (player.hasPermission("proxykick.bypass")) {
+                        // If player has bypass do not kick and warn player AND
+                        // If sender is a player (CONSOLE and Rcon are not concerned)
+                        if (player.hasPermission("proxykick.bypass") && (commandSender instanceof ProxiedPlayer)) {
                             commandSender.sendMessage(new TextComponent(bypass_message));
                             player.sendMessage(new TextComponent(bypass_warn));
                             return;
