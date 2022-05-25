@@ -16,18 +16,18 @@ public class kick extends Command {
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
         boolean broadcast = ProxyKick.config.getBoolean("format.broadcast");
-        String kicked = ProxyKick.locale.getString("format.kicked");
-        String confirm = ProxyKick.locale.getString("format.confirm");
-        String reason = ProxyKick.locale.getString("format.reason");
-        String separator = ProxyKick.locale.getString("format.separator");
-        String punctuation = ProxyKick.locale.getString("format.punctuation");
-        String info = ProxyKick.locale.getString("format.info");
-        String offline = ProxyKick.locale.getString("errors.offline");
-        String empty = ProxyKick.locale.getString("errors.empty");
-        String bypass = ProxyKick.locale.getString("errors.bypass");
-        String bypass_warn = ProxyKick.locale.getString("errors.bypass_warn");
-        String usage = ProxyKick.locale.getString("help.usage");
-        String description = ProxyKick.locale.getString("help.description");
+        String kicked = ProxyKick.locale.getString("kick.kicked");
+        String confirm = ProxyKick.locale.getString("kick.confirm");
+        String reason = ProxyKick.locale.getString("global.reason");
+        String separator = ProxyKick.locale.getString("global.separator");
+        String punctuation = ProxyKick.locale.getString("global.punctuation");
+        String info = ProxyKick.locale.getString("kick.info");
+        String offline = ProxyKick.locale.getString("kick.offline");
+        String empty = ProxyKick.locale.getString("global.empty");
+        String bypass = ProxyKick.locale.getString("kick.bypass");
+        String bypass_warn = ProxyKick.locale.getString("kick.bypass_warn");
+        String usage = ProxyKick.locale.getString("kick.usage");
+        String description = ProxyKick.locale.getString("kick.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -60,9 +60,7 @@ public class kick extends Command {
                     for (String arg : args) {
                         stringBuilder.append(arg).append(" ");
                     }
-
                     String reason_string = stringBuilder.toString();
-
                     // Check if there is a reason or not.
                     if (reason_string.trim().isEmpty()) {
                         kicked += punctuation;

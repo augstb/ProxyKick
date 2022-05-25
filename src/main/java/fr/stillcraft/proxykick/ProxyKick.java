@@ -1,5 +1,7 @@
 package fr.stillcraft.proxykick;
 
+import fr.stillcraft.proxykick.commands.kickall;
+import fr.stillcraft.proxykick.commands.proxykick;
 import fr.stillcraft.proxykick.commands.reload;
 import net.md_5.bungee.api.plugin.Plugin;
 import fr.stillcraft.proxykick.commands.kick;
@@ -16,9 +18,10 @@ public final class ProxyKick extends Plugin {
     public static Configuration locale;
 
     // Used config files keys
-    private static final String[] locale_keys = {"format.kicked","format.confirm","format.reason","format.separator",
-            "format.punctuation","format.info","errors.offline","errors.empty","errors.bypass","errors.bypass_warn",
-            "help.usage","help.description"};
+    private static final String[] locale_keys = {"kick.kicked","kickall.kicked","kick.confirm","global.reason",
+            "global.separator","global.punctuation","kick.info","kickall.info","kick.offline","global.empty",
+            "kick.bypass","kick.bypass_warn","kick.usage","kick.description","kickall.usage",
+            "kickall.description"};
     private static final String[] config_keys  = {"locale", "broadcast"};
 
     @Override
@@ -35,7 +38,9 @@ public final class ProxyKick extends Plugin {
             locale = getInstance().getConfig("locale_" + locale_string);
 
             // Register new commands
+            getProxy().getPluginManager().registerCommand(this, new proxykick());
             getProxy().getPluginManager().registerCommand(this, new kick());
+            getProxy().getPluginManager().registerCommand(this, new kickall());
             getProxy().getPluginManager().registerCommand(this, new reload());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -112,31 +117,45 @@ public final class ProxyKick extends Plugin {
 
         // locale files default values :
         if(locale.equals("locale_en")) {
-            if(key.equals("format.kicked"))      return "&7You have been kicked by &f%sender%";
-            if(key.equals("format.confirm"))     return "&7You kicked &f%player%";
-            if(key.equals("format.reason"))      return "&c%reason%";
-            if(key.equals("format.separator"))   return "&7:";
-            if(key.equals("format.punctuation")) return "&7.";
-            if(key.equals("format.info"))        return "&f%player% &7has been kicked by &f%sender%";
-            if(key.equals("errors.offline"))     return "&cError: &4%player%&c is not online.";
-            if(key.equals("errors.empty"))       return "&cError: nobody is online.";
-            if(key.equals("errors.bypass"))      return "&7You can't kick &f%player%&7.";
-            if(key.equals("errors.bypass_warn")) return "&f%sender% &7tried to kick you.";
-            if(key.equals("help.usage"))         return "&7Usage: &3/kick &b[player name] (reason)";
-            if(key.equals("help.description"))   return "&7Description: Kick player with custom message.";
+            if(key.equals("global.reason"))       return "&c%reason%";
+            if(key.equals("global.separator"))    return "&7:";
+            if(key.equals("global.punctuation"))  return "&7.";
+            if(key.equals("global.empty"))        return "&cError: nobody is online.";
+
+            if(key.equals("kick.kicked"))         return "&7You have been kicked by &f%sender%";
+            if(key.equals("kick.confirm"))        return "&7You kicked &f%player%";
+            if(key.equals("kick.info"))           return "&f%player% &7has been kicked by &f%sender%";
+            if(key.equals("kick.offline"))        return "&cError: &4%player%&c is not online.";
+            if(key.equals("kick.bypass"))         return "&7You can't kick &f%player%&7.";
+            if(key.equals("kick.bypass_warn"))    return "&f%sender% &7tried to kick you.";
+            if(key.equals("kick.usage"))          return "&7Usage: &3/kick &b[player name] (reason)";
+            if(key.equals("kick.description"))    return "&7Description: Kick player with custom message.";
+
+            if(key.equals("kickall.kicked"))      return "&7Everyone have been kicked by &f%sender%";
+            if(key.equals("kickall.confirm"))     return "&7You kicked everyone";
+            if(key.equals("kickall.info"))        return "&7Everyone have been kicked by &f%sender%";
+            if(key.equals("kickall.usage"))       return "&7Usage: &3/kickall (reason)";
+            if(key.equals("kickall.description")) return "&7Description: Kick everyone with custom message.";
         } else if(locale.equals("locale_fr")) {
-            if(key.equals("format.kicked"))      return "&7Vous avez été ejecté par &f%sender%";
-            if(key.equals("format.confirm"))     return "&7Vous avez éjecté &f%player%";
-            if(key.equals("format.reason"))      return "&c%reason%";
-            if(key.equals("format.separator"))   return " &7:";
-            if(key.equals("format.punctuation")) return "&7.";
-            if(key.equals("format.info"))        return "&f%player% &7a été éjecté par &f%sender%";
-            if(key.equals("errors.offline"))     return "&cErreur : &4%player%&c n'est pas connecté.";
-            if(key.equals("errors.empty"))       return "&cErreur : personne n'est connecté.";
-            if(key.equals("errors.bypass"))      return "&7Vous ne pouvez pas éjecter &f%player%&7.";
-            if(key.equals("errors.bypass_warn")) return "&f%sender% &7a essayé de vous éjecter.";
-            if(key.equals("help.usage"))         return "&7Syntaxe : &3/kick &b[nom du joueur] (raison)";
-            if(key.equals("help.description"))   return "&7Description : Ejecter un joueur avec un message personnalisé.";
+            if(key.equals("global.reason"))       return "&c%reason%";
+            if(key.equals("global.separator"))    return " &7:";
+            if(key.equals("global.punctuation"))  return "&7.";
+            if(key.equals("global.empty"))        return "&cErreur : personne n'est connecté.";
+
+            if(key.equals("kick.kicked"))         return "&7Vous avez été ejecté par &f%sender%";
+            if(key.equals("kick.confirm"))        return "&7Vous avez éjecté &f%player%";
+            if(key.equals("kick.info"))           return "&f%player% &7a été éjecté par &f%sender%";
+            if(key.equals("kick.offline"))        return "&cErreur : &4%player%&c n'est pas connecté.";
+            if(key.equals("kick.bypass"))         return "&7Vous ne pouvez pas éjecter &f%player%&7.";
+            if(key.equals("kick.bypass_warn"))    return "&f%sender% &7a essayé de vous éjecter.";
+            if(key.equals("kick.usage"))          return "&7Syntaxe : &3/kick &b[nom du joueur] (raison)";
+            if(key.equals("kick.description"))    return "&7Description : Ejecter un joueur avec un message personnalisé.";
+
+            if(key.equals("kickall.kicked"))      return "&7Tout le monde a été éjecté par &f%sender%";
+            if(key.equals("kickall.confirm"))     return "&7Vous avez éjecté tout le monde";
+            if(key.equals("kickall.info"))        return "&7Tout le monde a été éjecté par &f%sender%";
+            if(key.equals("kickall.usage"))       return "&7Syntaxe : &3/kickall (reason)";
+            if(key.equals("kickall.description")) return "&7Description : Ejecter tout le monde avec un message personnalisé.";
         }
         return "";
     }
