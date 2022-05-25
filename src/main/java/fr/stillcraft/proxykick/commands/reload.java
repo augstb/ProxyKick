@@ -13,9 +13,9 @@ public class reload extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        ProxyKick.createFile("config");
-        ProxyKick.createFile("locale_fr");
-        ProxyKick.createFile("locale_en");
+        ProxyKick.checkConfig("config");
+        ProxyKick.checkConfig("locale_fr");
+        ProxyKick.checkConfig("locale_en");
         try {
             // Reload config file
             ProxyKick.config = ProxyKick.getInstance().getConfig("config");
