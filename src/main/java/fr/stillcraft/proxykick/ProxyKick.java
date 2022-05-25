@@ -1,5 +1,6 @@
 package fr.stillcraft.proxykick;
 
+import fr.stillcraft.proxykick.commands.reload;
 import net.md_5.bungee.api.plugin.Plugin;
 import fr.stillcraft.proxykick.commands.kick;
 import net.md_5.bungee.config.Configuration;
@@ -7,10 +8,13 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
+import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 
 public final class ProxyKick extends Plugin {
     public static ProxyKick instance;
+    public static Configuration config;
+    public static Configuration locale;
 
     @Override
     public void onEnable() {
@@ -20,8 +24,18 @@ public final class ProxyKick extends Plugin {
         createFile("locale_fr");
         createFile("locale_en");
 
-        this.getLogger().log(Level.INFO,"Successfully started ProxyKick.");
-        getProxy().getPluginManager().registerCommand(this, new kick());
+        try {
+            // Load config file
+            config = getInstance().getConfig("config");
+            String locale_string = config.getString("locale");
+            locale = getInstance().getConfig("locale_" + locale_string);
+
+            this.getLogger().log(Level.INFO,"Successfully started ProxyKick.");
+            getProxy().getPluginManager().registerCommand(this, new kick());
+            getProxy().getPluginManager().registerCommand(this, new reload());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -31,18 +45,18 @@ public final class ProxyKick extends Plugin {
 
     public static ProxyKick getInstance() { return instance; }
 
-    private void createFile(String fileName){
-        if(!getDataFolder().exists()){
-            getDataFolder().mkdir();
+    public static void createFile(String fileName){
+        if(!ProxyKick.getInstance().getDataFolder().exists()){
+            ProxyKick.getInstance().getDataFolder().mkdir();
         }
-        File file = new File(getDataFolder(), fileName+".yml");
+        File file = new File(ProxyKick.getInstance().getDataFolder(), fileName+".yml");
 
         if (!file.exists()){
             try{
                 // Create new config file
                 file.createNewFile();
                 // Initialize configuration
-                Configuration config = getConfig(fileName);
+                Configuration config = ProxyKick.getInstance().getConfig(fileName);
 
                 // Writing default config values
                 if(fileName.equals("locale_en")){
@@ -56,9 +70,8 @@ public final class ProxyKick extends Plugin {
                     config.set("nobody_online", "&cError: nobody is online.");
                     config.set("help", "&7Usage: &3/kick &b[player name] (reason)");
                     config.set("description", "&7Description: Kick player with custom message.");
-                    config.set("permission", "&7You don't have permission to kick players.");
                     config.set("bypass_message", "&7You can't kick &f%player%&7.");
-                config.set("bypass_warn", "&f%sender% &7tried to kick you.");
+                    config.set("bypass_warn", "&f%sender% &7tried to kick you.");
                 }
                 if(fileName.equals("locale_fr")){
                     config.set("kicked_string", "&7Vous avez été ejecté par &f%sender%");
@@ -71,7 +84,6 @@ public final class ProxyKick extends Plugin {
                     config.set("nobody_online", "&cErreur : personne n'est connecté.");
                     config.set("help", "&7Syntaxe : &3/kick &b[player name] (raison)");
                     config.set("description", "&7Description : Ejecter un joueur avec un message personnalisé.");
-                    config.set("permission", "&7Vous n'avez pas la permission d'éjecter des joueurs.");
                     config.set("bypass_message", "&7Vous ne pouvez pas éjecter &f%player%&7.");
                     config.set("bypass_warn", "&f%sender% &7a essayé de vous éjecter.");
                 }
@@ -80,7 +92,7 @@ public final class ProxyKick extends Plugin {
                     config.set("broadcast", true);
                 }
                 // Save configuration
-                saveConfig(config, fileName);
+                ProxyKick.getInstance().saveConfig(config, fileName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -94,5 +106,4 @@ public final class ProxyKick extends Plugin {
     public void saveConfig(Configuration config, String fileName) throws IOException {
         ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, new File(getDataFolder(), fileName+".yml"));
     }
-
 }
