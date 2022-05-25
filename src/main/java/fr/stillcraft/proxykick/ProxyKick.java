@@ -10,7 +10,6 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
-import java.util.logging.Level;
 
 public final class ProxyKick extends Plugin {
     public static ProxyKick instance;
@@ -19,7 +18,7 @@ public final class ProxyKick extends Plugin {
 
     // Used config files keys
     private static final String[] locale_keys = {"kick.kicked","kickall.kicked","kick.confirm","global.reason",
-            "global.separator","global.punctuation","kick.info","kickall.info","kick.offline","global.empty",
+            "global.separator","global.punctuation","kick.info","kickall.info","kickall.offline","kick.offline","global.empty",
             "kick.bypass","kick.bypass_warn","kick.usage","kick.description","kickall.usage",
             "kickall.description"};
     private static final String[] config_keys  = {"locale", "broadcast"};
@@ -118,7 +117,7 @@ public final class ProxyKick extends Plugin {
         // locale files default values :
         if(locale.equals("locale_en")) {
             if(key.equals("global.reason"))       return "&c%reason%";
-            if(key.equals("global.separator"))    return "&7:";
+            if(key.equals("global.separator"))    return "&7: ";
             if(key.equals("global.punctuation"))  return "&7.";
             if(key.equals("global.empty"))        return "&cError: nobody is online.";
 
@@ -134,11 +133,12 @@ public final class ProxyKick extends Plugin {
             if(key.equals("kickall.kicked"))      return "&7Everyone have been kicked by &f%sender%";
             if(key.equals("kickall.confirm"))     return "&7You kicked everyone";
             if(key.equals("kickall.info"))        return "&7Everyone have been kicked by &f%sender%";
+            if(key.equals("kickall.offline"))     return "&cError: nobody is kickable.";
             if(key.equals("kickall.usage"))       return "&7Usage: &3/kickall (reason)";
             if(key.equals("kickall.description")) return "&7Description: Kick everyone with custom message.";
         } else if(locale.equals("locale_fr")) {
             if(key.equals("global.reason"))       return "&c%reason%";
-            if(key.equals("global.separator"))    return " &7:";
+            if(key.equals("global.separator"))    return " &7: ";
             if(key.equals("global.punctuation"))  return "&7.";
             if(key.equals("global.empty"))        return "&cErreur : personne n'est connecté.";
 
@@ -154,6 +154,7 @@ public final class ProxyKick extends Plugin {
             if(key.equals("kickall.kicked"))      return "&7Tout le monde a été éjecté par &f%sender%";
             if(key.equals("kickall.confirm"))     return "&7Vous avez éjecté tout le monde";
             if(key.equals("kickall.info"))        return "&7Tout le monde a été éjecté par &f%sender%";
+            if(key.equals("kickall.offline"))     return "&cError: Personne n'est éjectable.";
             if(key.equals("kickall.usage"))       return "&7Syntaxe : &3/kickall (reason)";
             if(key.equals("kickall.description")) return "&7Description : Ejecter tout le monde avec un message personnalisé.";
         }

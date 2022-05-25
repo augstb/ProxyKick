@@ -22,6 +22,7 @@ public class kickall extends Command {
         String separator = ProxyKick.locale.getString("global.separator");
         String punctuation = ProxyKick.locale.getString("global.punctuation");
         String info = ProxyKick.locale.getString("kickall.info");
+        String offline = ProxyKick.locale.getString("kickall.offline");
         String empty = ProxyKick.locale.getString("global.empty");
         String usage = ProxyKick.locale.getString("kickall.usage");
         String description = ProxyKick.locale.getString("kickall.description");
@@ -33,52 +34,58 @@ public class kickall extends Command {
         separator = ChatColor.translateAlternateColorCodes('&', separator);
         punctuation = ChatColor.translateAlternateColorCodes('&', punctuation);
         info = ChatColor.translateAlternateColorCodes('&', info);
+        offline = ChatColor.translateAlternateColorCodes('&', offline);
         empty = ChatColor.translateAlternateColorCodes('&', empty);
         usage = ChatColor.translateAlternateColorCodes('&', usage);
         description = ChatColor.translateAlternateColorCodes('&', description);
 
-        for (ProxiedPlayer player : ProxyKick.getInstance().getProxy().getPlayers()) {
-            args[0] = "";
-
-            // Construct complete kick strings
-            StringBuilder stringBuilder = new StringBuilder();
-            for (String arg : args) {
-                stringBuilder.append(arg).append(" ");
-            }
-            String reason_string = stringBuilder.toString();
-            // Check if there is a reason or not.
-            if (reason_string.trim().isEmpty()) {
-                kicked += punctuation;
-                confirm += punctuation;
-                info += punctuation;
-            } else {
-                kicked += separator + reason;
-                confirm += separator + reason;
-                info += separator + reason;
-            }
-
-            // Parse placeholders
-            kicked = kicked.replaceAll("%sender%", sender.getName());
-            confirm = confirm.replaceAll("%sender%", sender.getName());
-            info = info.replaceAll("%sender%", sender.getName());
-            kicked = kicked.replaceAll("%reason%", reason_string);
-            confirm = confirm.replaceAll("%reason%", reason_string);
-            info = info.replaceAll("%reason%", reason_string);
-            kicked = kicked.replaceAll("%player%", player.getDisplayName());
-            confirm = confirm.replaceAll("%player%", player.getDisplayName());
-            info = info.replaceAll("%player%", player.getDisplayName());
-
-            // If player has bypass do not kick AND
-            // If sender is a player (CONSOLE and Rcon are not concerned)
-            if (player.hasPermission("proxykick.bypass") && (sender instanceof ProxiedPlayer)){
+        if(args.length > 0) {
+            // Return help message
+            if (args[0].equalsIgnoreCase("help")) {
+                sender.sendMessage(new TextComponent(usage));
+                sender.sendMessage(new TextComponent(description));
                 return;
             }
+        }
 
-            // Execute actions (kicks player, and send messages)
-            player.disconnect(new TextComponent(kicked));
-            ProxyKick.getInstance().getLogger().log(Level.INFO, info);
+        // Construct complete kick strings
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String arg : args) {
+            stringBuilder.append(arg).append(" ");
+        }
+        String reason_string = stringBuilder.toString();
+        // Check if there is a reason or not.
+        if (reason_string.trim().isEmpty()) {
+            kicked += punctuation;
+            confirm += punctuation;
+            info += punctuation;
+        } else {
+            reason_string = reason_string.substring(0, reason_string.length()-1);
+            kicked += separator + reason;
+            confirm += separator + reason;
+            info += separator + reason;
+        }
 
-            // Broadcast message to all players if broadcast true in config
+        // Parse placeholders
+        kicked = kicked.replaceAll("%sender%", sender.getName());
+        confirm = confirm.replaceAll("%sender%", sender.getName());
+        info = info.replaceAll("%sender%", sender.getName());
+        kicked = kicked.replaceAll("%reason%", reason_string);
+        confirm = confirm.replaceAll("%reason%", reason_string);
+        info = info.replaceAll("%reason%", reason_string);
+
+        boolean success = false;
+        for (ProxiedPlayer player : ProxyKick.getInstance().getProxy().getPlayers()) {
+
+            // If player do not have bypass or sender is not player then kick
+            if (!player.hasPermission("proxykick.bypass") || !(sender instanceof ProxiedPlayer)) {
+                player.disconnect(new TextComponent(kicked));
+                success = true;
+            }
+        }
+
+        // Broadcast message to all players if broadcast true in config
+        if (success) {
             if (broadcast) {
                 for (ProxiedPlayer pp : ProxyKick.getInstance().getProxy().getPlayers()) {
                     pp.sendMessage(new TextComponent(info));
@@ -86,6 +93,9 @@ public class kickall extends Command {
             } else {
                 sender.sendMessage(new TextComponent(confirm));
             }
+        } else {
+            if(ProxyKick.getInstance().getProxy().getPlayers().size() > 0) sender.sendMessage(new TextComponent(offline));
+            else sender.sendMessage(new TextComponent(empty));
         }
     }
 }

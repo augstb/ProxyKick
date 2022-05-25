@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class kick extends Command {
@@ -43,7 +44,14 @@ public class kick extends Command {
         bypass = ChatColor.translateAlternateColorCodes('&', bypass);
         bypass_warn = ChatColor.translateAlternateColorCodes('&', bypass_warn);
 
-        if (args.length >= 1) {
+        if (args.length > 0) {
+            // Return help message
+            if (args[0].equalsIgnoreCase("help")) {
+                sender.sendMessage(new TextComponent(usage));
+                sender.sendMessage(new TextComponent(description));
+                return;
+            }
+
             // No players connected, send message to sender
             if (ProxyKick.getInstance().getProxy().getPlayers().size() == 0) {
                 sender.sendMessage(new TextComponent(empty));
@@ -53,11 +61,11 @@ public class kick extends Command {
             // Loop over players
             for (ProxiedPlayer player : ProxyKick.getInstance().getProxy().getPlayers()) {
                 if (args[0].equalsIgnoreCase(player.getDisplayName())) {
-                    args[0] = "";
 
                     // Construct complete kick strings
                     StringBuilder stringBuilder = new StringBuilder();
-                    for (String arg : args) {
+
+                    for (String arg : Arrays.copyOfRange(args, 1, args.length)) {
                         stringBuilder.append(arg).append(" ");
                     }
                     String reason_string = stringBuilder.toString();
@@ -67,6 +75,7 @@ public class kick extends Command {
                         confirm += punctuation;
                         info += punctuation;
                     } else {
+                        reason_string = reason_string.substring(0, reason_string.length()-1);
                         kicked += separator + reason;
                         confirm += separator + reason;
                         info += separator + reason;
