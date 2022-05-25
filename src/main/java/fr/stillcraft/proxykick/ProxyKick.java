@@ -16,12 +16,10 @@ public final class ProxyKick extends Plugin {
     public static Configuration locale;
 
     // Used config files keys
-    private static String[] locale_keys = {"format.kicked","format.confirm","format.reason","format.separator",
+    private static final String[] locale_keys = {"format.kicked","format.confirm","format.reason","format.separator",
             "format.punctuation","format.info","errors.offline","errors.empty","errors.bypass","errors.bypass_warn",
             "help.usage","help.description"};
-    private static String[] config_keys  = {"locale", "broadcast"};
-    // config_keys and config_types should have the same length
-    private static String[] config_types = {"String", "Boolean"};
+    private static final String[] config_keys  = {"locale", "broadcast"};
 
     @Override
     public void onEnable() {
@@ -36,7 +34,7 @@ public final class ProxyKick extends Plugin {
             String locale_string = config.getString("locale");
             locale = getInstance().getConfig("locale_" + locale_string);
 
-            this.getLogger().log(Level.INFO,"ProxyKick has been enabled.");
+            // Register new commands
             getProxy().getPluginManager().registerCommand(this, new kick());
             getProxy().getPluginManager().registerCommand(this, new reload());
         } catch (IOException e) {
@@ -64,56 +62,55 @@ public final class ProxyKick extends Plugin {
 
                 // Writing default config values
                 if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
-                    for (int i = 0; i < locale_keys.length; i++) {
-                        // Locale files contains only strings
-                        config.set(locale_keys[i], ProxyKick.getInstance().defaultConfigS(locale_keys[i], fileName));
+                    for (String locale_key : locale_keys) {
+                        config.set(locale_key, ProxyKick.getInstance().defaultConfig(locale_key, fileName));
                     }
                 }
                 if (fileName.equals("config")) {
-                    for (int i = 0; i < config_keys.length; i++) {
-                        if (config_types[i].equals("String")) {
-                            config.set(config_keys[i], ProxyKick.getInstance().defaultConfigS(config_keys[i], fileName));
-                        } else if (config_types[i].equals("Boolean")) {
-                            config.set(config_keys[i], ProxyKick.getInstance().defaultConfigB(config_keys[i], fileName));
-                        }
+                    for (String config_key : config_keys) {
+                        String temp_str = ProxyKick.getInstance().defaultConfig(config_key, fileName);
+                        if (Boolean.parseBoolean(temp_str)) config.set(config_key, Boolean.parseBoolean(temp_str));
+                        else config.set(config_key, temp_str);
                     }
                 }
                 // Save configuration
                 ProxyKick.getInstance().saveConfig(config, fileName);
-            } else{ // Check config data (add keys if does not exists)
+            } else { // Check config data (add keys if does not exists)
+                boolean save_config = false;
                 Configuration config = ProxyKick.getInstance().getConfig(fileName);
                 if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
-                    for (int i = 0; i < locale_keys.length; i++) {
-                        // Locale files contains only strings
-                        if (config.getString(locale_keys[i]).isEmpty()) {
-                            config.set(locale_keys[i], ProxyKick.getInstance().defaultConfigS(locale_keys[i], fileName));
+                    for (String locale_key : locale_keys) {
+                        if (config.getString(locale_key).isEmpty()) {
+                            config.set(locale_key, ProxyKick.getInstance().defaultConfig(locale_key, fileName));
+                            save_config = true;
                         }
                     }
                 }
                 if (fileName.equals("config")) {
-                    for (int i = 0; i < config_keys.length; i++) {
-                        if (config_types[i].equals("String")) {
-                            if (config.getString(config_keys[i]).isEmpty()) {
-                                config.set(config_keys[i], ProxyKick.getInstance().defaultConfigS(config_keys[i], fileName));
-                            }
-                        } else if (config_types[i].equals("Boolean")) {
-                            if (config.getString(config_keys[i]).isEmpty()) {
-                                config.set(config_keys[i], ProxyKick.getInstance().defaultConfigB(config_keys[i], fileName));
-                            }
+                    for (String config_key : config_keys) {
+                        if (config.getString(config_key).isEmpty()) {
+                            // Handle Boolean types
+                            String temp_str = ProxyKick.getInstance().defaultConfig(config_key, fileName);
+                            if (Boolean.parseBoolean(temp_str)) config.set(config_key, Boolean.parseBoolean(temp_str));
+                            else config.set(config_key, temp_str);
+                            save_config = true;
                         }
                     }
                 }
                 // Save configuration
-                ProxyKick.getInstance().saveConfig(config, fileName);
+                if (save_config) ProxyKick.getInstance().saveConfig(config, fileName);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String defaultConfigS(String key, String locale){
+    private String defaultConfig(String key, String locale){
+        // config file default values :
         if(key.equals("locale")) return "en";
-        // en locale default values :
+        if(key.equals("broadcast")) return "true";
+
+        // locale files default values :
         if(locale.equals("locale_en")) {
             if(key.equals("format.kicked"))      return "&7You have been kicked by &f%sender%";
             if(key.equals("format.confirm"))     return "&7You kicked &f%player%";
@@ -127,8 +124,7 @@ public final class ProxyKick extends Plugin {
             if(key.equals("errors.bypass_warn")) return "&f%sender% &7tried to kick you.";
             if(key.equals("help.usage"))         return "&7Usage: &3/kick &b[player name] (reason)";
             if(key.equals("help.description"))   return "&7Description: Kick player with custom message.";
-        }
-        if(locale.equals("locale_fr")) {
+        } else if(locale.equals("locale_fr")) {
             if(key.equals("format.kicked"))      return "&7Vous avez été ejecté par &f%sender%";
             if(key.equals("format.confirm"))     return "&7Vous avez éjecté &f%player%";
             if(key.equals("format.reason"))      return "&c%reason%";
@@ -143,11 +139,6 @@ public final class ProxyKick extends Plugin {
             if(key.equals("help.description"))   return "&7Description : Ejecter un joueur avec un message personnalisé.";
         }
         return "";
-    }
-
-    private Boolean defaultConfigB(String key, String locale){
-        if(key.equals("broadcast")) return true;
-        return false;
     }
 
     public Configuration getConfig(String fileName) throws IOException {

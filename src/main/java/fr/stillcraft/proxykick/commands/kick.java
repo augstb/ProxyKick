@@ -14,12 +14,6 @@ public class kick extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        // Read configuration
-        // Get config and locale data
-        // Configuration config = ProxyKick.getInstance().getConfig("config");
-        // String locale_string = ProxyKick.config.getString("locale");
-        // Configuration locale = ProxyKick.getInstance().getConfig("locale_" + locale_string);
-
         // Get each string from config and locale data
         boolean broadcast = ProxyKick.config.getBoolean("format.broadcast");
         String kicked = ProxyKick.locale.getString("format.kicked");
@@ -113,12 +107,9 @@ public class kick extends Command {
                     } else {
                         sender.sendMessage(new TextComponent(confirm));
                     }
-
-                    // Exit for loop
                     return;
                 }
             }
-
             // Player not found, send message to sender
             offline = offline.replaceAll("%player%", args[0]);
             sender.sendMessage(new TextComponent(offline));

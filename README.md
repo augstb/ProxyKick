@@ -10,17 +10,19 @@ Initial localization strings (English and French) are available, to customize ki
 
 #### Permissions
 
-```proxykick.kick``` : Allows to use the ```/kick``` command.
+```proxykick.kick``` : Allows to use the ```/kick``` and ```/proxykick:kick``` commands.
 
 ```proxykick.bypass``` : Allows player to be insensitive to ```/kick``` command.
+
+```proxykick.reload``` : Allows player to reload config files using ```/proxykick:reload``` command.
 
 #### Usage
 
 ```/kick [player name] (reason)``` : Kick a player with an optional reason.
 
-#### TODO
+```/proxykick:kick [player name] (reason)``` : Alias of ```/kick``` command.
 
-- Add a reload command to reload config files
+```/proxykick:reload``` : Reload configuration and localization files.
 
 ---
 
