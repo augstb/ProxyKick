@@ -2,7 +2,11 @@
 
 **ProxyKick** is a very basic [BungeeCord](https://www.spigotmc.org/wiki/bungeecord/) plugin which allows Minecraft server moderators (with ```proxykick.kick``` permission node) to **kick** players from the **entire bungee network** with optional custom message.
 
-Initial localization strings (English and French) are available, to customize kick messages.
+Initial **localization** strings (English and French) are available, to customize kick messages.
+
+The ```proxykick.bypass``` permission node is available to exempt specific players from beeing kicked (*CONSOLE* and *Rcon* can still kick anyone).
+
+The ```proxykick.reload``` permission node is available to reload configuration and localization data.
 
 **ProxyKick.jar** is available in Releases section.
 
