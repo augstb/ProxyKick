@@ -13,21 +13,25 @@ public final class ProxyKick extends Plugin {
     public static Configuration config;
     public static Configuration locale;
 
+    // Version (don't forget to increment)
+    public static final String version = "1.1";
     // Used config files keys
     private static final String[] locale_keys = {
             "kick.kicked","kick.confirm","kick.info","kick.offline","kick.bypass","kick.bypass_warn","kick.usage","kick.description",
             "kickall.kicked","kickall.info","kickall.offline","kickall.usage","kickall.description","kickall.confirm",
             "global.reason","global.separator","global.punctuation","global.empty","global.usage","global.description","global.prefix",
             "help.usage","help.description",
-            "reload.success","reload.usage","reload.description"
+            "reload.success","reload.usage","reload.description",
+            "global.version" // VERSION SHOULD BE LAST
     };
-    private static final String[] config_keys  = {"locale", "broadcast"};
+    private static final String[] config_keys  = {"version","locale","broadcast"};
     private static final String[] locale_keys_v1_0 = {
             "format.kicked","format.confirm","format.info","errors.offline","errors.bypass","errors.bypass_warn","","",
             "","","","","","",
-            "format.reason","format.separator","format.punctuation","errors.empty","","","",
+            "format.reason","","format.punctuation","errors.empty","","","",
             "","",
-            "","",""
+            "","","",
+            ""
     };
 
     @Override
@@ -49,6 +53,7 @@ public final class ProxyKick extends Plugin {
             getProxy().getPluginManager().registerCommand(this, new kickall());
             getProxy().getPluginManager().registerCommand(this, new proxykick());
             getProxy().getPluginManager().registerCommand(this, new reload());
+            getProxy().getPluginManager().registerCommand(this, new version());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -91,17 +96,40 @@ public final class ProxyKick extends Plugin {
             } else { // Check config data (add keys if does not exists)
                 Configuration config = ProxyKick.getInstance().getConfig(fileName);
                 if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
-                    for (int i=0; i<locale_keys.length; i++){
-                        if (config.getString(locale_keys[i]).isEmpty()) {
-                            if (!config.getString(locale_keys_v1_0[i]).isEmpty()) {
-                                // Check for legacy keys and remove old key from config
-                                config.set(locale_keys[i], config.getString(locale_keys_v1_0[i]));
-                                config.set(locale_keys_v1_0[i], null);
-                            } else {
-                                // Add default key to locale file
-                                config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                    for (int i=0; i<locale_keys.length; i++){                                   // browse locale keys ...
+                        if (!locale_keys[i].equals("global.version")) {                         // if not global.version key
+                            if (config.getString(locale_keys[i]).isEmpty()) {                   // if key is empty
+                                if (!config.getString("global.version").equals(version)) { // if versions are not the same
+                                    if (config.getString("global.version").isEmpty()) {    // convert from v1.0
+                                        if (!config.getString(locale_keys_v1_0[i]).isEmpty()) { // convert only non-empty keys
+                                            config.set(locale_keys[i], config.getString(locale_keys_v1_0[i]));
+                                            config.set(locale_keys_v1_0[i], null);
+                                        } else {                                                // Add default key to locale file
+                                            config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                        }
+                                    }
+                                } else {                                                        // if versions are the same add default
+                                    config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                }
+                                save_config = true;
+                            } else if (!config.getString("global.version").equals(version)) {
+                                if (config.getString("global.version").isEmpty()) {
+                                    // Convert from version 1.0
+                                    if (config.getString(locale_keys_v1_0[i]).isEmpty()) {
+                                        config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                    }
+                                }
                             }
-                            save_config = true;
+                        } else {
+                            if(!config.getString(locale_keys[i]).equals(version)){ // modify version if does not coincides with plugin version.
+                                config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+
+                                // Throw old 1.0 config keys
+                                config.set("format", null);
+                                config.set("errors", null);
+
+                                save_config = true;
+                            }
                         }
                     }
                 }
@@ -126,8 +154,9 @@ public final class ProxyKick extends Plugin {
 
     private String defaultConfig(String key, String locale){
         // config file default values :
-        if(key.equals("locale")) return "en";
-        if(key.equals("broadcast")) return "true";
+        if(key.equals("version"))                 return version;
+        if(key.equals("locale"))                  return "en";
+        if(key.equals("broadcast"))               return "true";
 
         // locale files default values :
         if(locale.equals("locale_en")) {
@@ -138,6 +167,7 @@ public final class ProxyKick extends Plugin {
             if(key.equals("global.usage"))        return "&fUsage: ";
             if(key.equals("global.description"))  return "&fDescription: ";
             if(key.equals("global.prefix"))       return "&f[ProxyKick]";
+            if(key.equals("global.version"))      return version;
 
             if(key.equals("kick.kicked"))         return "&7You have been kicked by &f%sender%";
             if(key.equals("kick.confirm"))        return "&7You kicked &f%player%";
@@ -169,6 +199,7 @@ public final class ProxyKick extends Plugin {
             if(key.equals("global.usage"))        return "&fSyntaxe : ";
             if(key.equals("global.description"))  return "&fDescription : ";
             if(key.equals("global.prefix"))       return "&f[ProxyKick]";
+            if(key.equals("global.version"))      return version;
 
             if(key.equals("kick.kicked"))         return "&7Vous avez été ejecté par &f%sender%";
             if(key.equals("kick.confirm"))        return "&7Vous avez éjecté &f%player%";

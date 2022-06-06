@@ -23,6 +23,7 @@ public class proxykick extends Command implements TabExecutor {
             if(args[0].equals("kickall")) new kickall().execute(sender, Arrays.copyOfRange(args, 1, args.length));
             if(args[0].equals("reload")) new reload().execute(sender, Arrays.copyOfRange(args, 1, args.length));
             if(args[0].equals("help")) new help().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            if(args[0].equals("version")) new version().execute(sender, Arrays.copyOfRange(args, 1, args.length));
         } else {
             new help().execute(sender,null);
         }
@@ -40,6 +41,7 @@ public class proxykick extends Command implements TabExecutor {
             if ("kick".startsWith(search)) matches.add("kick");
             if ("kickall".startsWith(search)) matches.add("kickall");
             if ("reload".startsWith(search)) matches.add("reload");
+            if ("version".startsWith(search)) matches.add("version");
         }
         if (args.length == 2){
             String cmd = args[0].toLowerCase();
