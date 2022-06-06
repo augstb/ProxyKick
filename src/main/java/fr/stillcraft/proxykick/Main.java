@@ -21,6 +21,7 @@ public final class Main extends Plugin {
             "kickall.kicked","kickall.info","kickall.offline","kickall.usage","kickall.description","kickall.confirm",
             "global.reason","global.separator","global.punctuation","global.empty","global.usage","global.description","global.prefix",
             "help.usage","help.description",
+            "version.usage","version.description",
             "reload.success","reload.usage","reload.description",
             "global.version" // VERSION SHOULD BE LAST
     };
@@ -29,6 +30,7 @@ public final class Main extends Plugin {
             "format.kicked","format.confirm","format.info","errors.offline","errors.bypass","errors.bypass_warn","","",
             "","","","","","",
             "format.reason","","format.punctuation","errors.empty","","","",
+            "","",
             "","",
             "","","",
             ""
@@ -188,6 +190,9 @@ public final class Main extends Plugin {
             if(key.equals("help.usage"))          return "&3/proxykick:help";
             if(key.equals("help.description"))    return "&7Show the help page.";
 
+            if(key.equals("version.usage"))          return "&3/proxykick:version";
+            if(key.equals("version.description"))    return "&7Show plugin version.";
+
             if(key.equals("reload.success"))      return "&7Config and locale files reloaded.";
             if(key.equals("reload.usage"))        return "&3/proxykick:reload";
             if(key.equals("reload.description"))  return "&7Reload the configuration files.";
@@ -219,6 +224,9 @@ public final class Main extends Plugin {
 
             if(key.equals("help.usage"))          return "&3/proxykick:help";
             if(key.equals("help.description"))    return "&7Afficher la page d'aide.";
+
+            if(key.equals("version.usage"))       return "&3/proxykick:version";
+            if(key.equals("version.description")) return "&7Afficher la version du plugin.";
 
             if(key.equals("reload.success"))      return "&7Fichiers de config et de langue rechargés.";
             if(key.equals("reload.usage"))        return "&3/proxykick:reload";

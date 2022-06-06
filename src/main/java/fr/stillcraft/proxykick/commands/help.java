@@ -21,6 +21,8 @@ public class help extends Command {
         String kickall_description = Main.locale.getString("kickall.description");
         String reload_usage = Main.locale.getString("reload.usage");
         String reload_description = Main.locale.getString("reload.description");
+        String version_usage = Main.locale.getString("version.usage");
+        String version_description = Main.locale.getString("version.description");
 
         // Colorize each string
         global_prefix = ChatColor.translateAlternateColorCodes('&', global_prefix);
@@ -32,12 +34,15 @@ public class help extends Command {
         kickall_description = ChatColor.translateAlternateColorCodes('&', kickall_description);
         reload_usage = ChatColor.translateAlternateColorCodes('&', reload_usage);
         reload_description = ChatColor.translateAlternateColorCodes('&', reload_description);
+        version_usage = ChatColor.translateAlternateColorCodes('&', version_usage);
+        version_description = ChatColor.translateAlternateColorCodes('&', version_description);
 
         sender.sendMessage(new TextComponent(ChatColor.WHITE+"--- "+global_prefix+ChatColor.WHITE+" ---"));
-        sender.sendMessage(new TextComponent(help_usage+ChatColor.WHITE+" - "+help_description));
         sender.sendMessage(new TextComponent(kick_usage+ChatColor.WHITE+" - "+kick_description));
         sender.sendMessage(new TextComponent(kickall_usage+ChatColor.WHITE+" - "+kickall_description));
+        sender.sendMessage(new TextComponent(help_usage+ChatColor.WHITE+" - "+help_description));
         sender.sendMessage(new TextComponent(reload_usage+ChatColor.WHITE+" - "+reload_description));
+        sender.sendMessage(new TextComponent(version_usage+ChatColor.WHITE+" - "+version_description));
     }
 
 }
