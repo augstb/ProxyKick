@@ -1,7 +1,7 @@
 package fr.stillcraft.proxykick.commands;
 
 import com.google.common.collect.ImmutableSet;
-import fr.stillcraft.proxykick.ProxyKick;
+import fr.stillcraft.proxykick.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -20,19 +20,19 @@ public class kick extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
-        boolean broadcast = ProxyKick.config.getBoolean("format.broadcast");
-        String kicked = ProxyKick.locale.getString("kick.kicked");
-        String confirm = ProxyKick.locale.getString("kick.confirm");
-        String reason = ProxyKick.locale.getString("global.reason");
-        String separator = ProxyKick.locale.getString("global.separator");
-        String punctuation = ProxyKick.locale.getString("global.punctuation");
-        String info = ProxyKick.locale.getString("kick.info");
-        String offline = ProxyKick.locale.getString("kick.offline");
-        String empty = ProxyKick.locale.getString("global.empty");
-        String bypass = ProxyKick.locale.getString("kick.bypass");
-        String bypass_warn = ProxyKick.locale.getString("kick.bypass_warn");
-        String usage = ProxyKick.locale.getString("global.usage")+ProxyKick.locale.getString("kick.usage");
-        String description = ProxyKick.locale.getString("global.description")+ProxyKick.locale.getString("kick.description");
+        boolean broadcast = Main.config.getBoolean("format.broadcast");
+        String kicked = Main.locale.getString("kick.kicked");
+        String confirm = Main.locale.getString("kick.confirm");
+        String reason = Main.locale.getString("global.reason");
+        String separator = Main.locale.getString("global.separator");
+        String punctuation = Main.locale.getString("global.punctuation");
+        String info = Main.locale.getString("kick.info");
+        String offline = Main.locale.getString("kick.offline");
+        String empty = Main.locale.getString("global.empty");
+        String bypass = Main.locale.getString("kick.bypass");
+        String bypass_warn = Main.locale.getString("kick.bypass_warn");
+        String usage = Main.locale.getString("global.usage")+Main.locale.getString("kick.usage");
+        String description = Main.locale.getString("global.description")+Main.locale.getString("kick.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -57,13 +57,13 @@ public class kick extends Command implements TabExecutor {
             }
 
             // No players connected, send message to sender
-            if (ProxyKick.getInstance().getProxy().getPlayers().size() == 0) {
+            if (Main.getInstance().getProxy().getPlayers().size() == 0) {
                 sender.sendMessage(new TextComponent(empty));
                 return;
             }
 
             // Loop over players
-            for (ProxiedPlayer player : ProxyKick.getInstance().getProxy().getPlayers()) {
+            for (ProxiedPlayer player : Main.getInstance().getProxy().getPlayers()) {
                 if (args[0].equalsIgnoreCase(player.getDisplayName())) {
 
                     // Construct complete kick strings
@@ -108,11 +108,11 @@ public class kick extends Command implements TabExecutor {
 
                     // Execute actions (kicks player, and send messages)
                     player.disconnect(new TextComponent(kicked));
-                    ProxyKick.getInstance().getLogger().log(Level.INFO, info);
+                    Main.getInstance().getLogger().log(Level.INFO, info);
 
                     // Broadcast message to all players if broadcast true in config
                     if (broadcast) {
-                        for (ProxiedPlayer pp : ProxyKick.getInstance().getProxy().getPlayers()) {
+                        for (ProxiedPlayer pp : Main.getInstance().getProxy().getPlayers()) {
                             pp.sendMessage(new TextComponent(info));
                         }
                     } else {
@@ -140,7 +140,7 @@ public class kick extends Command implements TabExecutor {
         Set<String> matches = new HashSet<>();
         if (args.length == 1){
             String search = args[0].toLowerCase();
-            for (ProxiedPlayer player: ProxyKick.getInstance().getProxy().getPlayers()){
+            for (ProxiedPlayer player: Main.getInstance().getProxy().getPlayers()){
                 if (player.getName().toLowerCase().startsWith(search)){
                     matches.add(player.getName());
                 }

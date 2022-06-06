@@ -1,7 +1,7 @@
 package fr.stillcraft.proxykick.commands;
 
 import com.google.common.collect.ImmutableSet;
-import fr.stillcraft.proxykick.ProxyKick;
+import fr.stillcraft.proxykick.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,17 +18,17 @@ public class kickall extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
-        boolean broadcast = ProxyKick.config.getBoolean("format.broadcast");
-        String kicked = ProxyKick.locale.getString("kickall.kicked");
-        String confirm = ProxyKick.locale.getString("kickall.confirm");
-        String reason = ProxyKick.locale.getString("global.reason");
-        String separator = ProxyKick.locale.getString("global.separator");
-        String punctuation = ProxyKick.locale.getString("global.punctuation");
-        String info = ProxyKick.locale.getString("kickall.info");
-        String offline = ProxyKick.locale.getString("kickall.offline");
-        String empty = ProxyKick.locale.getString("global.empty");
-        String usage = ProxyKick.locale.getString("global.usage")+ProxyKick.locale.getString("kickall.usage");
-        String description = ProxyKick.locale.getString("global.description")+ProxyKick.locale.getString("kickall.description");
+        boolean broadcast = Main.config.getBoolean("format.broadcast");
+        String kicked = Main.locale.getString("kickall.kicked");
+        String confirm = Main.locale.getString("kickall.confirm");
+        String reason = Main.locale.getString("global.reason");
+        String separator = Main.locale.getString("global.separator");
+        String punctuation = Main.locale.getString("global.punctuation");
+        String info = Main.locale.getString("kickall.info");
+        String offline = Main.locale.getString("kickall.offline");
+        String empty = Main.locale.getString("global.empty");
+        String usage = Main.locale.getString("global.usage")+Main.locale.getString("kickall.usage");
+        String description = Main.locale.getString("global.description")+Main.locale.getString("kickall.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -78,7 +78,7 @@ public class kickall extends Command implements TabExecutor {
         info = info.replaceAll("%reason%", reason_string);
 
         boolean success = false;
-        for (ProxiedPlayer player : ProxyKick.getInstance().getProxy().getPlayers()) {
+        for (ProxiedPlayer player : Main.getInstance().getProxy().getPlayers()) {
 
             // If player do not have bypass or sender is not player then kick
             if (!player.hasPermission("proxykick.bypass") || !(sender instanceof ProxiedPlayer)) {
@@ -90,14 +90,14 @@ public class kickall extends Command implements TabExecutor {
         // Broadcast message to all players if broadcast true in config
         if (success) {
             if (broadcast) {
-                for (ProxiedPlayer pp : ProxyKick.getInstance().getProxy().getPlayers()) {
+                for (ProxiedPlayer pp : Main.getInstance().getProxy().getPlayers()) {
                     pp.sendMessage(new TextComponent(info));
                 }
             } else {
                 sender.sendMessage(new TextComponent(confirm));
             }
         } else {
-            if(ProxyKick.getInstance().getProxy().getPlayers().size() > 0) sender.sendMessage(new TextComponent(offline));
+            if(Main.getInstance().getProxy().getPlayers().size() > 0) sender.sendMessage(new TextComponent(offline));
             else sender.sendMessage(new TextComponent(empty));
         }
     }

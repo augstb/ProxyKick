@@ -1,6 +1,6 @@
 package fr.stillcraft.proxykick.commands;
 
-import fr.stillcraft.proxykick.ProxyKick;
+import fr.stillcraft.proxykick.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -12,15 +12,15 @@ public class help extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
-        String global_prefix = ProxyKick.locale.getString("global.prefix");
-        String help_usage = ProxyKick.locale.getString("help.usage");
-        String help_description = ProxyKick.locale.getString("help.description");
-        String kick_usage = ProxyKick.locale.getString("kick.usage");
-        String kick_description = ProxyKick.locale.getString("kick.description");
-        String kickall_usage = ProxyKick.locale.getString("kickall.usage");
-        String kickall_description = ProxyKick.locale.getString("kickall.description");
-        String reload_usage = ProxyKick.locale.getString("reload.usage");
-        String reload_description = ProxyKick.locale.getString("reload.description");
+        String global_prefix = Main.locale.getString("global.prefix");
+        String help_usage = Main.locale.getString("help.usage");
+        String help_description = Main.locale.getString("help.description");
+        String kick_usage = Main.locale.getString("kick.usage");
+        String kick_description = Main.locale.getString("kick.description");
+        String kickall_usage = Main.locale.getString("kickall.usage");
+        String kickall_description = Main.locale.getString("kickall.description");
+        String reload_usage = Main.locale.getString("reload.usage");
+        String reload_description = Main.locale.getString("reload.description");
 
         // Colorize each string
         global_prefix = ChatColor.translateAlternateColorCodes('&', global_prefix);

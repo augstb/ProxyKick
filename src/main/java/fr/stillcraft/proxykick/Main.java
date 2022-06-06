@@ -8,8 +8,8 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
 
-public final class ProxyKick extends Plugin {
-    public static ProxyKick instance;
+public final class Main extends Plugin {
+    public static Main instance;
     public static Configuration config;
     public static Configuration locale;
 
@@ -64,37 +64,37 @@ public final class ProxyKick extends Plugin {
         // Plugin shutdown logic
     }
 
-    public static ProxyKick getInstance() { return instance; }
+    public static Main getInstance() { return instance; }
 
     public static void checkConfig(String fileName) {
-        if(!ProxyKick.getInstance().getDataFolder().exists()){
-            ProxyKick.getInstance().getDataFolder().mkdir();
+        if(!Main.getInstance().getDataFolder().exists()){
+            Main.getInstance().getDataFolder().mkdir();
         }
-        File file = new File(ProxyKick.getInstance().getDataFolder(), fileName+".yml");
+        File file = new File(Main.getInstance().getDataFolder(), fileName+".yml");
         try {
             boolean save_config = false;
             if (!file.exists()) {
                 // Initialize configuration
                 file.createNewFile();
-                Configuration config = ProxyKick.getInstance().getConfig(fileName);
+                Configuration config = Main.getInstance().getConfig(fileName);
 
                 // Writing default config values
                 if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
                     for (String locale_key : locale_keys) {
-                        config.set(locale_key, ProxyKick.getInstance().defaultConfig(locale_key, fileName));
+                        config.set(locale_key, Main.getInstance().defaultConfig(locale_key, fileName));
                     }
                 }
                 if (fileName.equals("config")) {
                     for (String config_key : config_keys) {
-                        String temp_str = ProxyKick.getInstance().defaultConfig(config_key, fileName);
+                        String temp_str = Main.getInstance().defaultConfig(config_key, fileName);
                         if (Boolean.parseBoolean(temp_str)) config.set(config_key, Boolean.parseBoolean(temp_str));
                         else config.set(config_key, temp_str);
                     }
                 }
                 // Save configuration
-                ProxyKick.getInstance().saveConfig(config, fileName);
+                Main.getInstance().saveConfig(config, fileName);
             } else { // Check config data (add keys if does not exists)
-                Configuration config = ProxyKick.getInstance().getConfig(fileName);
+                Configuration config = Main.getInstance().getConfig(fileName);
                 if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
                     for (int i=0; i<locale_keys.length; i++){                                   // browse locale keys ...
                         if (!locale_keys[i].equals("global.version")) {                         // if not global.version key
@@ -105,24 +105,24 @@ public final class ProxyKick extends Plugin {
                                             config.set(locale_keys[i], config.getString(locale_keys_v1_0[i]));
                                             config.set(locale_keys_v1_0[i], null);
                                         } else {                                                // Add default key to locale file
-                                            config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                            config.set(locale_keys[i], Main.getInstance().defaultConfig(locale_keys[i], fileName));
                                         }
                                     }
                                 } else {                                                        // if versions are the same add default
-                                    config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                    config.set(locale_keys[i], Main.getInstance().defaultConfig(locale_keys[i], fileName));
                                 }
                                 save_config = true;
                             } else if (!config.getString("global.version").equals(version)) {
                                 if (config.getString("global.version").isEmpty()) {
                                     // Convert from version 1.0
                                     if (config.getString(locale_keys_v1_0[i]).isEmpty()) {
-                                        config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                        config.set(locale_keys[i], Main.getInstance().defaultConfig(locale_keys[i], fileName));
                                     }
                                 }
                             }
                         } else {
                             if(!config.getString(locale_keys[i]).equals(version)){ // modify version if does not coincides with plugin version.
-                                config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                                config.set(locale_keys[i], Main.getInstance().defaultConfig(locale_keys[i], fileName));
 
                                 // Throw old 1.0 config keys
                                 config.set("format", null);
@@ -137,7 +137,7 @@ public final class ProxyKick extends Plugin {
                     for (String config_key : config_keys) {
                         if (config.getString(config_key).isEmpty()) {
                             // Handle Boolean types
-                            String temp_str = ProxyKick.getInstance().defaultConfig(config_key, fileName);
+                            String temp_str = Main.getInstance().defaultConfig(config_key, fileName);
                             if (Boolean.parseBoolean(temp_str)) config.set(config_key, Boolean.parseBoolean(temp_str));
                             else config.set(config_key, temp_str);
                             save_config = true;
@@ -145,7 +145,7 @@ public final class ProxyKick extends Plugin {
                     }
                 }
                 // Save configuration
-                if (save_config) ProxyKick.getInstance().saveConfig(config, fileName);
+                if (save_config) Main.getInstance().saveConfig(config, fileName);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

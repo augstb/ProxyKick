@@ -1,6 +1,6 @@
 name: ProxyKick
 version: '${project.version}'
-main: fr.stillcraft.proxykick.ProxyKick
+main: fr.stillcraft.proxykick.Main
 author: Augustin Blanchet
 description: ProxyKick is a BungeeCord plugin which allows Minecraft server moderators to kick players from the entire bungee network.
 commands:

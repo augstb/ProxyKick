@@ -1,7 +1,7 @@
 package fr.stillcraft.proxykick.commands;
 
 import com.google.common.collect.ImmutableSet;
-import fr.stillcraft.proxykick.ProxyKick;
+import fr.stillcraft.proxykick.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -19,8 +19,8 @@ public class reload extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             // Get each string from config and locale data
-            String usage = ProxyKick.locale.getString("global.usage")+ProxyKick.locale.getString("reload.usage");
-            String description = ProxyKick.locale.getString("global.description")+ProxyKick.locale.getString("reload.description");
+            String usage = Main.locale.getString("global.usage")+Main.locale.getString("reload.usage");
+            String description = Main.locale.getString("global.description")+Main.locale.getString("reload.description");
 
             // Colorize each string
             usage = ChatColor.translateAlternateColorCodes('&', usage);
@@ -34,16 +34,16 @@ public class reload extends Command implements TabExecutor {
             }
         }
 
-        ProxyKick.checkConfig("config");
-        ProxyKick.checkConfig("locale_fr");
-        ProxyKick.checkConfig("locale_en");
+        Main.checkConfig("config");
+        Main.checkConfig("locale_fr");
+        Main.checkConfig("locale_en");
         try {
             // Reload config file
-            ProxyKick.config = ProxyKick.getInstance().getConfig("config");
-            String locale_string = ProxyKick.config.getString("locale");
-            ProxyKick.locale = ProxyKick.getInstance().getConfig("locale_" + locale_string);
+            Main.config = Main.getInstance().getConfig("config");
+            String locale_string = Main.config.getString("locale");
+            Main.locale = Main.getInstance().getConfig("locale_" + locale_string);
 
-            String success = ProxyKick.locale.getString("global.prefix")+" "+ProxyKick.locale.getString("reload.success");
+            String success = Main.locale.getString("global.prefix")+" "+Main.locale.getString("reload.success");
             success = ChatColor.translateAlternateColorCodes('&', success);
 
             sender.sendMessage(new TextComponent(success));

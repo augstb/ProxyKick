@@ -1,7 +1,7 @@
 package fr.stillcraft.proxykick.commands;
 
 import com.google.common.collect.ImmutableSet;
-import fr.stillcraft.proxykick.ProxyKick;
+import fr.stillcraft.proxykick.Main;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -20,10 +20,12 @@ public class proxykick extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         if (args.length >= 1) {
             if(args[0].equals("kick")) new kick().execute(sender, Arrays.copyOfRange(args, 1, args.length));
-            if(args[0].equals("kickall")) new kickall().execute(sender, Arrays.copyOfRange(args, 1, args.length));
-            if(args[0].equals("reload")) new reload().execute(sender, Arrays.copyOfRange(args, 1, args.length));
-            if(args[0].equals("help")) new help().execute(sender, Arrays.copyOfRange(args, 1, args.length));
-            if(args[0].equals("version")) new version().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("kickall")) new kickall().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("reload")) new reload().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("help")) new help().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("version")) new version().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("info")) new version().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else new help().execute(sender, Arrays.copyOfRange(args, 1, args.length));
         } else {
             new help().execute(sender,null);
         }
@@ -42,12 +44,13 @@ public class proxykick extends Command implements TabExecutor {
             if ("kickall".startsWith(search)) matches.add("kickall");
             if ("reload".startsWith(search)) matches.add("reload");
             if ("version".startsWith(search)) matches.add("version");
+            if ("info".startsWith(search)) matches.add("info");
         }
         if (args.length == 2){
             String cmd = args[0].toLowerCase();
             String search = args[1].toLowerCase();
             if (cmd.equalsIgnoreCase("kick")){
-                for (ProxiedPlayer player: ProxyKick.getInstance().getProxy().getPlayers()){
+                for (ProxiedPlayer player: Main.getInstance().getProxy().getPlayers()){
                     if (player.getName().toLowerCase().startsWith(search)){
                         matches.add(player.getName());
                     }
