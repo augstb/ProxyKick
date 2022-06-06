@@ -1,15 +1,18 @@
 package fr.stillcraft.proxykick.commands;
 
+import com.google.common.collect.ImmutableSet;
 import fr.stillcraft.proxykick.ProxyKick;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.util.logging.Level;
+import java.util.HashSet;
+import java.util.Set;
 
-public class kickall extends Command {
+public class kickall extends Command implements TabExecutor {
     public kickall() { super("proxykick:kickall", "proxykick.kickall", "kickall"); }
 
     @Override
@@ -24,8 +27,8 @@ public class kickall extends Command {
         String info = ProxyKick.locale.getString("kickall.info");
         String offline = ProxyKick.locale.getString("kickall.offline");
         String empty = ProxyKick.locale.getString("global.empty");
-        String usage = ProxyKick.locale.getString("kickall.usage");
-        String description = ProxyKick.locale.getString("kickall.description");
+        String usage = ProxyKick.locale.getString("global.usage")+ProxyKick.locale.getString("kickall.usage");
+        String description = ProxyKick.locale.getString("global.description")+ProxyKick.locale.getString("kickall.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -97,5 +100,18 @@ public class kickall extends Command {
             if(ProxyKick.getInstance().getProxy().getPlayers().size() > 0) sender.sendMessage(new TextComponent(offline));
             else sender.sendMessage(new TextComponent(empty));
         }
+    }
+
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args){
+        if (args.length>2 || args.length==0){
+            return ImmutableSet.of();
+        }
+
+        Set<String> matches = new HashSet<>();
+        if (args.length == 1){
+            String search = args[0].toLowerCase();
+            if ("help".startsWith(search)) matches.add("help");
+        }
+        return matches;
     }
 }

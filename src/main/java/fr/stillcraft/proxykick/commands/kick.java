@@ -1,16 +1,20 @@
 package fr.stillcraft.proxykick.commands;
 
+import com.google.common.collect.ImmutableSet;
 import fr.stillcraft.proxykick.ProxyKick;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
-public class kick extends Command {
+public class kick extends Command implements TabExecutor {
     public kick() { super("proxykick:kick","proxykick.kick", "kick"); }
 
     @Override
@@ -27,8 +31,8 @@ public class kick extends Command {
         String empty = ProxyKick.locale.getString("global.empty");
         String bypass = ProxyKick.locale.getString("kick.bypass");
         String bypass_warn = ProxyKick.locale.getString("kick.bypass_warn");
-        String usage = ProxyKick.locale.getString("kick.usage");
-        String description = ProxyKick.locale.getString("kick.description");
+        String usage = ProxyKick.locale.getString("global.usage")+ProxyKick.locale.getString("kick.usage");
+        String description = ProxyKick.locale.getString("global.description")+ProxyKick.locale.getString("kick.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -126,5 +130,23 @@ public class kick extends Command {
             sender.sendMessage(new TextComponent(usage));
             sender.sendMessage(new TextComponent(description));
         }
+    }
+
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args){
+        if (args.length>1 || args.length==0){
+            return ImmutableSet.of();
+        }
+
+        Set<String> matches = new HashSet<>();
+        if (args.length == 1){
+            String search = args[0].toLowerCase();
+            for (ProxiedPlayer player: ProxyKick.getInstance().getProxy().getPlayers()){
+                if (player.getName().toLowerCase().startsWith(search)){
+                    matches.add(player.getName());
+                }
+            }
+            if ("help".startsWith(search)) matches.add("help");
+        }
+        return matches;
     }
 }

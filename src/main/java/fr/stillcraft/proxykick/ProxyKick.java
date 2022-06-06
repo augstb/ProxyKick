@@ -1,10 +1,7 @@
 package fr.stillcraft.proxykick;
 
-import fr.stillcraft.proxykick.commands.kickall;
-import fr.stillcraft.proxykick.commands.proxykick;
-import fr.stillcraft.proxykick.commands.reload;
+import fr.stillcraft.proxykick.commands.*;
 import net.md_5.bungee.api.plugin.Plugin;
-import fr.stillcraft.proxykick.commands.kick;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -17,11 +14,21 @@ public final class ProxyKick extends Plugin {
     public static Configuration locale;
 
     // Used config files keys
-    private static final String[] locale_keys = {"kick.kicked","kickall.kicked","kick.confirm","global.reason",
-            "global.separator","global.punctuation","kick.info","kickall.info","kickall.offline","kick.offline","global.empty",
-            "kick.bypass","kick.bypass_warn","kick.usage","kick.description","kickall.usage",
-            "kickall.description"};
+    private static final String[] locale_keys = {
+            "kick.kicked","kick.confirm","kick.info","kick.offline","kick.bypass","kick.bypass_warn","kick.usage","kick.description",
+            "kickall.kicked","kickall.info","kickall.offline","kickall.usage","kickall.description","kickall.confirm",
+            "global.reason","global.separator","global.punctuation","global.empty","global.usage","global.description","global.prefix",
+            "help.usage","help.description",
+            "reload.success","reload.usage","reload.description"
+    };
     private static final String[] config_keys  = {"locale", "broadcast"};
+    private static final String[] locale_keys_v1_0 = {
+            "format.kicked","format.confirm","format.info","errors.offline","errors.bypass","errors.bypass_warn","","",
+            "","","","","","",
+            "format.reason","format.separator","format.punctuation","errors.empty","","","",
+            "","",
+            "","",""
+    };
 
     @Override
     public void onEnable() {
@@ -37,9 +44,10 @@ public final class ProxyKick extends Plugin {
             locale = getInstance().getConfig("locale_" + locale_string);
 
             // Register new commands
-            getProxy().getPluginManager().registerCommand(this, new proxykick());
+            getProxy().getPluginManager().registerCommand(this, new help());
             getProxy().getPluginManager().registerCommand(this, new kick());
             getProxy().getPluginManager().registerCommand(this, new kickall());
+            getProxy().getPluginManager().registerCommand(this, new proxykick());
             getProxy().getPluginManager().registerCommand(this, new reload());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -59,9 +67,10 @@ public final class ProxyKick extends Plugin {
         }
         File file = new File(ProxyKick.getInstance().getDataFolder(), fileName+".yml");
         try {
+            boolean save_config = false;
             if (!file.exists()) {
-                file.createNewFile();
                 // Initialize configuration
+                file.createNewFile();
                 Configuration config = ProxyKick.getInstance().getConfig(fileName);
 
                 // Writing default config values
@@ -80,12 +89,18 @@ public final class ProxyKick extends Plugin {
                 // Save configuration
                 ProxyKick.getInstance().saveConfig(config, fileName);
             } else { // Check config data (add keys if does not exists)
-                boolean save_config = false;
                 Configuration config = ProxyKick.getInstance().getConfig(fileName);
                 if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
-                    for (String locale_key : locale_keys) {
-                        if (config.getString(locale_key).isEmpty()) {
-                            config.set(locale_key, ProxyKick.getInstance().defaultConfig(locale_key, fileName));
+                    for (int i=0; i<locale_keys.length; i++){
+                        if (config.getString(locale_keys[i]).isEmpty()) {
+                            if (!config.getString(locale_keys_v1_0[i]).isEmpty()) {
+                                // Check for legacy keys and remove old key from config
+                                config.set(locale_keys[i], config.getString(locale_keys_v1_0[i]));
+                                config.set(locale_keys_v1_0[i], null);
+                            } else {
+                                // Add default key to locale file
+                                config.set(locale_keys[i], ProxyKick.getInstance().defaultConfig(locale_keys[i], fileName));
+                            }
                             save_config = true;
                         }
                     }
@@ -120,6 +135,9 @@ public final class ProxyKick extends Plugin {
             if(key.equals("global.separator"))    return "&7: ";
             if(key.equals("global.punctuation"))  return "&7.";
             if(key.equals("global.empty"))        return "&cError: nobody is online.";
+            if(key.equals("global.usage"))        return "&fUsage: ";
+            if(key.equals("global.description"))  return "&fDescription: ";
+            if(key.equals("global.prefix"))       return "&f[ProxyKick]";
 
             if(key.equals("kick.kicked"))         return "&7You have been kicked by &f%sender%";
             if(key.equals("kick.confirm"))        return "&7You kicked &f%player%";
@@ -127,20 +145,30 @@ public final class ProxyKick extends Plugin {
             if(key.equals("kick.offline"))        return "&cError: &4%player%&c is not online.";
             if(key.equals("kick.bypass"))         return "&7You can't kick &f%player%&7.";
             if(key.equals("kick.bypass_warn"))    return "&f%sender% &7tried to kick you.";
-            if(key.equals("kick.usage"))          return "&7Usage: &3/kick &b[player name] (reason)";
-            if(key.equals("kick.description"))    return "&7Description: Kick player with custom message.";
+            if(key.equals("kick.usage"))          return "&3/kick &b[playername] (reason)";
+            if(key.equals("kick.description"))    return "&7Kick player with a message.";
 
             if(key.equals("kickall.kicked"))      return "&7Everyone have been kicked by &f%sender%";
             if(key.equals("kickall.confirm"))     return "&7You kicked everyone";
             if(key.equals("kickall.info"))        return "&7Everyone have been kicked by &f%sender%";
             if(key.equals("kickall.offline"))     return "&cError: nobody is kickable.";
-            if(key.equals("kickall.usage"))       return "&7Usage: &3/kickall (reason)";
-            if(key.equals("kickall.description")) return "&7Description: Kick everyone with custom message.";
+            if(key.equals("kickall.usage"))       return "&3/kickall &b(reason)";
+            if(key.equals("kickall.description")) return "&7Kick everyone with a message.";
+
+            if(key.equals("help.usage"))          return "&3/proxykick:help";
+            if(key.equals("help.description"))    return "&7Show the help page.";
+
+            if(key.equals("reload.success"))      return "&7Config and locale files reloaded.";
+            if(key.equals("reload.usage"))        return "&3/proxykick:reload";
+            if(key.equals("reload.description"))  return "&7Reload the configuration files.";
         } else if(locale.equals("locale_fr")) {
             if(key.equals("global.reason"))       return "&c%reason%";
             if(key.equals("global.separator"))    return " &7: ";
             if(key.equals("global.punctuation"))  return "&7.";
             if(key.equals("global.empty"))        return "&cErreur : personne n'est connecté.";
+            if(key.equals("global.usage"))        return "&fSyntaxe : ";
+            if(key.equals("global.description"))  return "&fDescription : ";
+            if(key.equals("global.prefix"))       return "&f[ProxyKick]";
 
             if(key.equals("kick.kicked"))         return "&7Vous avez été ejecté par &f%sender%";
             if(key.equals("kick.confirm"))        return "&7Vous avez éjecté &f%player%";
@@ -148,15 +176,22 @@ public final class ProxyKick extends Plugin {
             if(key.equals("kick.offline"))        return "&cErreur : &4%player%&c n'est pas connecté.";
             if(key.equals("kick.bypass"))         return "&7Vous ne pouvez pas éjecter &f%player%&7.";
             if(key.equals("kick.bypass_warn"))    return "&f%sender% &7a essayé de vous éjecter.";
-            if(key.equals("kick.usage"))          return "&7Syntaxe : &3/kick &b[nom du joueur] (raison)";
-            if(key.equals("kick.description"))    return "&7Description : Ejecter un joueur avec un message personnalisé.";
+            if(key.equals("kick.usage"))          return "&3/kick &b[joueur] (raison)";
+            if(key.equals("kick.description"))    return "&7Ejecter un joueur avec un message.";
 
             if(key.equals("kickall.kicked"))      return "&7Tout le monde a été éjecté par &f%sender%";
             if(key.equals("kickall.confirm"))     return "&7Vous avez éjecté tout le monde";
             if(key.equals("kickall.info"))        return "&7Tout le monde a été éjecté par &f%sender%";
             if(key.equals("kickall.offline"))     return "&cError: Personne n'est éjectable.";
-            if(key.equals("kickall.usage"))       return "&7Syntaxe : &3/kickall (reason)";
-            if(key.equals("kickall.description")) return "&7Description : Ejecter tout le monde avec un message personnalisé.";
+            if(key.equals("kickall.usage"))       return "&3/kickall &b(reason)";
+            if(key.equals("kickall.description")) return "&7Ejecter tout le monde avec un message.";
+
+            if(key.equals("help.usage"))          return "&3/proxykick:help";
+            if(key.equals("help.description"))    return "&7Afficher la page d'aide.";
+
+            if(key.equals("reload.success"))      return "&7Fichiers de config et de langue rechargés.";
+            if(key.equals("reload.usage"))        return "&3/proxykick:reload";
+            if(key.equals("reload.description"))  return "&7Recharger les fichiers de configuration.";
         }
         return "";
     }
