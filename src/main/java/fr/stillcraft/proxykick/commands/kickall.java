@@ -103,7 +103,7 @@ public class kickall extends Command implements TabExecutor {
     }
 
     public Iterable<String> onTabComplete(CommandSender sender, String[] args){
-        if (args.length>2 || args.length==0){
+        if (args.length>1 || args.length==0){
             return ImmutableSet.of();
         }
 
