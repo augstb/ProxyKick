@@ -20,7 +20,7 @@ public class kick extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
-        boolean broadcast = Main.config.getBoolean("format.broadcast");
+        boolean broadcast = Main.config.getBoolean("broadcast");
         String kicked = Main.locale.getString("kick.kicked");
         String confirm = Main.locale.getString("kick.confirm");
         String reason = Main.locale.getString("global.reason");
