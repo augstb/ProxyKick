@@ -1,4 +1,4 @@
-# ProxyKick (BungeeCord Plugin)
+# <img src="./illustrations/proxykick.png" style="height:48px" /> ProxyKick (BungeeCord Plugin)
 
 #### Description:
 ***ProxyKick*** is a very basic BungeeCord plugin which allows Minecraft server moderators to kick players from the entire bungee network with optional custom message.
