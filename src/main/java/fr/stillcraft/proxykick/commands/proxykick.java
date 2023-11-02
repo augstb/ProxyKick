@@ -18,10 +18,14 @@ public class proxykick extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        boolean sender_isplayer = (sender instanceof ProxiedPlayer);
+        boolean has_kickall_perm = (!sender_isplayer || sender.hasPermission("proxykick.kickall"));
+        boolean has_reload_perm = (!sender_isplayer || sender.hasPermission("proxykick.reload"));
+
         if (args.length >= 1) {
             if(args[0].equals("kick")) new kick().execute(sender, Arrays.copyOfRange(args, 1, args.length));
-            else if(args[0].equals("kickall")) new kickall().execute(sender, Arrays.copyOfRange(args, 1, args.length));
-            else if(args[0].equals("reload")) new reload().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("kickall") && has_kickall_perm) new kickall().execute(sender, Arrays.copyOfRange(args, 1, args.length));
+            else if(args[0].equals("reload") && has_reload_perm) new reload().execute(sender, Arrays.copyOfRange(args, 1, args.length));
             else if(args[0].equals("help")) new help().execute(sender, Arrays.copyOfRange(args, 1, args.length));
             else if(args[0].equals("version")) new version().execute(sender, Arrays.copyOfRange(args, 1, args.length));
             else if(args[0].equals("info")) new version().execute(sender, Arrays.copyOfRange(args, 1, args.length));
@@ -32,6 +36,10 @@ public class proxykick extends Command implements TabExecutor {
     }
 
     public Iterable<String> onTabComplete(CommandSender sender, String[] args){
+        boolean sender_isplayer = (sender instanceof ProxiedPlayer);
+        boolean has_kickall_perm = (!sender_isplayer || sender.hasPermission("proxykick.kickall"));
+        boolean has_reload_perm = (!sender_isplayer || sender.hasPermission("proxykick.reload"));
+
         if (args.length>2 || args.length==0){
             return ImmutableSet.of();
         }
@@ -41,8 +49,8 @@ public class proxykick extends Command implements TabExecutor {
             String search = args[0].toLowerCase();
             if ("help".startsWith(search)) matches.add("help");
             if ("kick".startsWith(search)) matches.add("kick");
-            if ("kickall".startsWith(search)) matches.add("kickall");
-            if ("reload".startsWith(search)) matches.add("reload");
+            if ("kickall".startsWith(search) && has_kickall_perm) matches.add("kickall");
+            if ("reload".startsWith(search) && has_reload_perm) matches.add("reload");
             if ("version".startsWith(search)) matches.add("version");
             if ("info".startsWith(search)) matches.add("info");
         }
@@ -57,10 +65,10 @@ public class proxykick extends Command implements TabExecutor {
                 }
                 if ("help".startsWith(search)) matches.add("help");
             }
-            if (cmd.equalsIgnoreCase("kickall")){
+            if (cmd.equalsIgnoreCase("kickall") && has_kickall_perm){
                 if ("help".startsWith(search)) matches.add("help");
             }
-            if (cmd.equalsIgnoreCase("reload")){
+            if (cmd.equalsIgnoreCase("reload") && has_reload_perm){
                 if ("help".startsWith(search)) matches.add("help");
             }
         }
