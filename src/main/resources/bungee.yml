@@ -8,16 +8,16 @@ commands:
     aliases: [pk]
     description: Basic command.
   "proxykick:kick":
-    aliases: [pk:kick, kick]
+    aliases: [pk kick, kick]
     description: Kick player with a message.
   "proxykick:kickall":
-    aliases: [pk:kickall, kickall]
+    aliases: [pk kickall, kickall]
     description: Kick everyone with a message.
   "proxykick:help":
-    aliases: [pk:help]
+    aliases: [pk help]
     description: Show the help page.
   "proxykick:reload":
-    aliases: [pk:reload]
+    aliases: [pk reload]
     description: Reload the configuration files.
 permisisons:
   proxykick.kick:

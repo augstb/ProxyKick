@@ -14,7 +14,7 @@ public final class Main extends Plugin {
     public static Configuration locale;
 
     // Version (don't forget to increment)
-    public static final String version = "1.1";
+    public static final String version = "1.2";
     // Used config files keys
     private static final String[] locale_keys = {
             "kick.kicked","kick.confirm","kick.info","kick.offline","kick.bypass","kick.bypass_warn","kick.usage","kick.description",
