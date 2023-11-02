@@ -41,13 +41,13 @@ public final class Main extends Plugin {
         instance = this;
 
         checkConfig("config");
-        checkConfig("locale_fr");
-        checkConfig("locale_en");
+        checkConfig("locales/locale_fr");
+        checkConfig("locales/locale_en");
         try {
             // Load config file
             config = getInstance().getConfig("config");
             String locale_string = config.getString("locale");
-            locale = getInstance().getConfig("locale_" + locale_string);
+            locale = getInstance().getConfig("locales/locale_" + locale_string);
 
             // Register new commands
             getProxy().getPluginManager().registerCommand(this, new help());
@@ -77,11 +77,12 @@ public final class Main extends Plugin {
             boolean save_config = false;
             if (!file.exists()) {
                 // Initialize configuration
+                file.getParentFile().mkdirs();
                 file.createNewFile();
                 Configuration config = Main.getInstance().getConfig(fileName);
 
                 // Writing default config values
-                if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
+                if (fileName.equals("locales/locale_en") || fileName.equals("locales/locale_fr")) {
                     for (String locale_key : locale_keys) {
                         config.set(locale_key, Main.getInstance().defaultConfig(locale_key, fileName));
                     }
@@ -97,7 +98,7 @@ public final class Main extends Plugin {
                 Main.getInstance().saveConfig(config, fileName);
             } else { // Check config data (add keys if does not exists)
                 Configuration config = Main.getInstance().getConfig(fileName);
-                if (fileName.equals("locale_en") || fileName.equals("locale_fr")) {
+                if (fileName.equals("locales/locale_en") || fileName.equals("locales/locale_fr")) {
                     for (int i=0; i<locale_keys.length; i++){                                   // browse locale keys ...
                         if (!locale_keys[i].equals("global.version")) {                         // if not global.version key
                             if (config.getString(locale_keys[i]).isEmpty()) {                   // if key is empty
@@ -161,7 +162,7 @@ public final class Main extends Plugin {
         if(key.equals("broadcast"))               return "true";
 
         // locale files default values :
-        if(locale.equals("locale_en")) {
+        if(locale.equals("locales/locale_en")) {
             if(key.equals("global.reason"))       return "&c%reason%";
             if(key.equals("global.separator"))    return "&7: ";
             if(key.equals("global.punctuation"))  return "&7.";
@@ -196,7 +197,7 @@ public final class Main extends Plugin {
             if(key.equals("reload.success"))      return "&7Config and locale files reloaded.";
             if(key.equals("reload.usage"))        return "&3/proxykick:reload";
             if(key.equals("reload.description"))  return "&7Reload the configuration files.";
-        } else if(locale.equals("locale_fr")) {
+        } else if(locale.equals("locales/locale_fr")) {
             if(key.equals("global.reason"))       return "&c%reason%";
             if(key.equals("global.separator"))    return " &7: ";
             if(key.equals("global.punctuation"))  return "&7.";
