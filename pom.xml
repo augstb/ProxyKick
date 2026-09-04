@@ -77,5 +77,20 @@
             <version>3.4.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Standalone YAML config lib (no BungeeCord runtime dependency) shaded into the jar so
+             config/locale loading works identically on both BungeeCord and Velocity. -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-config</artifactId>
+            <version>1.16-R0.5-SNAPSHOT</version>
+        </dependency>
+        <!-- bungeecord-config declares these as optional, so they aren't inherited transitively.
+             BungeeCord always has SnakeYAML on its own classpath, but Velocity doesn't, so it must
+             be declared (and shaded) explicitly or config loading throws NoClassDefFoundError there. -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.27</version>
+        </dependency>
     </dependencies>
 </project>

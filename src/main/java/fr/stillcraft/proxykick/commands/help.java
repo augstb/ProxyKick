@@ -17,17 +17,17 @@ public class help extends Command {
         boolean has_reload_perm = (!sender_isplayer || sender.hasPermission("proxykick.reload"));
 
         // Get each string from config and locale data
-        String global_prefix = Main.locale.getString("global.prefix");
-        String help_usage = Main.locale.getString("help.usage");
-        String help_description = Main.locale.getString("help.description");
-        String kick_usage = Main.locale.getString("kick.usage");
-        String kick_description = Main.locale.getString("kick.description");
-        String kickall_usage = Main.locale.getString("kickall.usage");
-        String kickall_description = Main.locale.getString("kickall.description");
-        String reload_usage = Main.locale.getString("reload.usage");
-        String reload_description = Main.locale.getString("reload.description");
-        String version_usage = Main.locale.getString("version.usage");
-        String version_description = Main.locale.getString("version.description");
+        String global_prefix = Main.cfg.msg("global.prefix");
+        String help_usage = Main.cfg.msg("help.usage");
+        String help_description = Main.cfg.msg("help.description");
+        String kick_usage = Main.cfg.msg("kick.usage");
+        String kick_description = Main.cfg.msg("kick.description");
+        String kickall_usage = Main.cfg.msg("kickall.usage");
+        String kickall_description = Main.cfg.msg("kickall.description");
+        String reload_usage = Main.cfg.msg("reload.usage");
+        String reload_description = Main.cfg.msg("reload.description");
+        String version_usage = Main.cfg.msg("version.usage");
+        String version_description = Main.cfg.msg("version.description");
 
         // Colorize each string
         global_prefix = ChatColor.translateAlternateColorCodes('&', global_prefix);

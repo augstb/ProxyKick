@@ -1,14 +1,14 @@
-# <img src="./illustrations/proxykick.png" style="height:48px" /> ProxyKick (BungeeCord Plugin)
+# <img src="./illustrations/proxykick.png" style="height:48px" /> ProxyKick (BungeeCord & Velocity Plugin)
 
 #### Description:
-***ProxyKick*** is a very basic BungeeCord plugin which allows Minecraft server moderators to kick players from the entire bungee network with optional custom message.
+***ProxyKick*** is a very basic proxy plugin which allows Minecraft server moderators to kick players from the entire network with optional custom message. It runs on both **BungeeCord** and **Velocity** — a single jar works on either proxy.
 
 ![image](./illustrations/illustration.jpg)
 
 #### Features:
 - A *bypass* permission node is available to exempt players from beeing kicked (CONSOLE and Rcon can still kick anyone).
-- A *kick* command is available to kick a player from the entire bungee network with an optional custom message.
-- A *kickall* command is available to kick all players from the entire bungee network with an optional custom message.
+- A *kick* command is available to kick a player from the entire network with an optional custom message.
+- A *kickall* command is available to kick all players from the entire network with an optional custom message.
 - A *reload* command is available to reload configuration and localization data.
 - A *version* command is available to show plugin version and informations.
 - A *help* command is available to show the help page, containing command list.

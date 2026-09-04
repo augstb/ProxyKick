@@ -2,6 +2,7 @@ package fr.stillcraft.proxykick.commands;
 
 import com.google.common.collect.ImmutableSet;
 import fr.stillcraft.proxykick.Main;
+import fr.stillcraft.proxykick.core.MessageFormatter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -9,7 +10,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -20,19 +20,19 @@ public class kick extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
-        boolean broadcast = Main.config.getBoolean("broadcast");
-        String kicked = Main.locale.getString("kick.kicked");
-        String confirm = Main.locale.getString("kick.confirm");
-        String reason = Main.locale.getString("global.reason");
-        String separator = Main.locale.getString("global.separator");
-        String punctuation = Main.locale.getString("global.punctuation");
-        String info = Main.locale.getString("kick.info");
-        String offline = Main.locale.getString("kick.offline");
-        String empty = Main.locale.getString("global.empty");
-        String bypass = Main.locale.getString("kick.bypass");
-        String bypass_warn = Main.locale.getString("kick.bypass_warn");
-        String usage = Main.locale.getString("global.usage")+Main.locale.getString("kick.usage");
-        String description = Main.locale.getString("global.description")+Main.locale.getString("kick.description");
+        boolean broadcast = Main.cfg.cfgBool("broadcast");
+        String kicked = Main.cfg.msg("kick.kicked");
+        String confirm = Main.cfg.msg("kick.confirm");
+        String reason = Main.cfg.msg("global.reason");
+        String separator = Main.cfg.msg("global.separator");
+        String punctuation = Main.cfg.msg("global.punctuation");
+        String info = Main.cfg.msg("kick.info");
+        String offline = Main.cfg.msg("kick.offline");
+        String empty = Main.cfg.msg("global.empty");
+        String bypass = Main.cfg.msg("kick.bypass");
+        String bypass_warn = Main.cfg.msg("kick.bypass_warn");
+        String usage = Main.cfg.msg("global.usage")+Main.cfg.msg("kick.usage");
+        String description = Main.cfg.msg("global.description")+Main.cfg.msg("kick.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -67,36 +67,18 @@ public class kick extends Command implements TabExecutor {
                 if (args[0].equalsIgnoreCase(player.getName())) {
 
                     // Construct complete kick strings
-                    StringBuilder stringBuilder = new StringBuilder();
-
-                    for (String arg : Arrays.copyOfRange(args, 1, args.length)) {
-                        stringBuilder.append(arg).append(" ");
-                    }
-                    String reason_string = stringBuilder.toString();
-                    // Check if there is a reason or not.
-                    if (reason_string.trim().isEmpty()) {
-                        kicked += punctuation;
-                        confirm += punctuation;
-                        info += punctuation;
-                    } else {
-                        reason_string = reason_string.substring(0, reason_string.length()-1);
-                        kicked += separator + reason;
-                        confirm += separator + reason;
-                        info += separator + reason;
-                    }
+                    String reason_string = MessageFormatter.buildReason(args, 1);
+                    String[] msgs = MessageFormatter.appendReasonOrPunctuation(kicked, confirm, info, reason_string, reason, separator, punctuation);
+                    kicked = msgs[0];
+                    confirm = msgs[1];
+                    info = msgs[2];
 
                     // Parse placeholders
-                    bypass_warn = bypass_warn.replace("%sender%", sender.getName());
-                    kicked = kicked.replace("%sender%", sender.getName());
-                    confirm = confirm.replace("%sender%", sender.getName());
-                    info = info.replace("%sender%", sender.getName());
-                    kicked = kicked.replace("%reason%", reason_string);
-                    confirm = confirm.replace("%reason%", reason_string);
-                    info = info.replace("%reason%", reason_string);
-                    bypass = bypass.replace("%player%", player.getDisplayName());
-                    kicked = kicked.replace("%player%", player.getDisplayName());
-                    confirm = confirm.replace("%player%", player.getDisplayName());
-                    info = info.replace("%player%", player.getDisplayName());
+                    kicked = MessageFormatter.replacePlaceholders(kicked, sender.getName(), player.getDisplayName(), reason_string);
+                    confirm = MessageFormatter.replacePlaceholders(confirm, sender.getName(), player.getDisplayName(), reason_string);
+                    info = MessageFormatter.replacePlaceholders(info, sender.getName(), player.getDisplayName(), reason_string);
+                    bypass = MessageFormatter.replacePlaceholders(bypass, null, player.getDisplayName(), null);
+                    bypass_warn = MessageFormatter.replacePlaceholders(bypass_warn, sender.getName(), null, null);
 
                     // If player has bypass do not kick and warn player AND
                     // If sender is a player (CONSOLE and Rcon are not concerned)
@@ -122,7 +104,7 @@ public class kick extends Command implements TabExecutor {
                 }
             }
             // Player not found, send message to sender
-            offline = offline.replace("%player%", args[0]);
+            offline = MessageFormatter.replacePlaceholders(offline, null, args[0], null);
             sender.sendMessage(new TextComponent(offline));
 
         } else {

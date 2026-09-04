@@ -8,7 +8,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +18,8 @@ public class reload extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         if(args.length > 0) {
             // Get each string from config and locale data
-            String usage = Main.locale.getString("global.usage")+Main.locale.getString("reload.usage");
-            String description = Main.locale.getString("global.description")+Main.locale.getString("reload.description");
+            String usage = Main.cfg.msg("global.usage")+Main.cfg.msg("reload.usage");
+            String description = Main.cfg.msg("global.description")+Main.cfg.msg("reload.description");
 
             // Colorize each string
             usage = ChatColor.translateAlternateColorCodes('&', usage);
@@ -34,21 +33,13 @@ public class reload extends Command implements TabExecutor {
             }
         }
 
-        Main.checkConfig("config");
-        Main.checkConfig("locales/locale_fr");
-        Main.checkConfig("locales/locale_en");
-        try {
-            // Reload config file
-            Main.config = Main.getInstance().getConfig("config");
-            Main.locale = Main.getInstance().getConfig("locales/locale_" + Main.resolveLocale());
+        // Reload config file
+        Main.cfg.checkAndLoad();
 
-            String success = Main.locale.getString("global.prefix")+" "+Main.locale.getString("reload.success");
-            success = ChatColor.translateAlternateColorCodes('&', success);
+        String success = Main.cfg.msg("global.prefix")+" "+Main.cfg.msg("reload.success");
+        success = ChatColor.translateAlternateColorCodes('&', success);
 
-            sender.sendMessage(new TextComponent(success));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        sender.sendMessage(new TextComponent(success));
     }
 
     public Iterable<String> onTabComplete(CommandSender sender, String[] args){

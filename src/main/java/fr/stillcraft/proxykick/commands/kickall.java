@@ -2,6 +2,7 @@ package fr.stillcraft.proxykick.commands;
 
 import com.google.common.collect.ImmutableSet;
 import fr.stillcraft.proxykick.Main;
+import fr.stillcraft.proxykick.core.MessageFormatter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,17 +19,17 @@ public class kickall extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         // Get each string from config and locale data
-        boolean broadcast = Main.config.getBoolean("broadcast");
-        String kicked = Main.locale.getString("kickall.kicked");
-        String confirm = Main.locale.getString("kickall.confirm");
-        String reason = Main.locale.getString("global.reason");
-        String separator = Main.locale.getString("global.separator");
-        String punctuation = Main.locale.getString("global.punctuation");
-        String info = Main.locale.getString("kickall.info");
-        String offline = Main.locale.getString("kickall.offline");
-        String empty = Main.locale.getString("global.empty");
-        String usage = Main.locale.getString("global.usage")+Main.locale.getString("kickall.usage");
-        String description = Main.locale.getString("global.description")+Main.locale.getString("kickall.description");
+        boolean broadcast = Main.cfg.cfgBool("broadcast");
+        String kicked = Main.cfg.msg("kickall.kicked");
+        String confirm = Main.cfg.msg("kickall.confirm");
+        String reason = Main.cfg.msg("global.reason");
+        String separator = Main.cfg.msg("global.separator");
+        String punctuation = Main.cfg.msg("global.punctuation");
+        String info = Main.cfg.msg("kickall.info");
+        String offline = Main.cfg.msg("kickall.offline");
+        String empty = Main.cfg.msg("global.empty");
+        String usage = Main.cfg.msg("global.usage")+Main.cfg.msg("kickall.usage");
+        String description = Main.cfg.msg("global.description")+Main.cfg.msg("kickall.description");
 
         // Colorize each string
         kicked = ChatColor.translateAlternateColorCodes('&', kicked);
@@ -52,30 +53,16 @@ public class kickall extends Command implements TabExecutor {
         }
 
         // Construct complete kick strings
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String arg : args) {
-            stringBuilder.append(arg).append(" ");
-        }
-        String reason_string = stringBuilder.toString();
-        // Check if there is a reason or not.
-        if (reason_string.trim().isEmpty()) {
-            kicked += punctuation;
-            confirm += punctuation;
-            info += punctuation;
-        } else {
-            reason_string = reason_string.substring(0, reason_string.length()-1);
-            kicked += separator + reason;
-            confirm += separator + reason;
-            info += separator + reason;
-        }
+        String reason_string = MessageFormatter.buildReason(args, 0);
+        String[] msgs = MessageFormatter.appendReasonOrPunctuation(kicked, confirm, info, reason_string, reason, separator, punctuation);
+        kicked = msgs[0];
+        confirm = msgs[1];
+        info = msgs[2];
 
         // Parse placeholders
-        kicked = kicked.replace("%sender%", sender.getName());
-        confirm = confirm.replace("%sender%", sender.getName());
-        info = info.replace("%sender%", sender.getName());
-        kicked = kicked.replace("%reason%", reason_string);
-        confirm = confirm.replace("%reason%", reason_string);
-        info = info.replace("%reason%", reason_string);
+        kicked = MessageFormatter.replacePlaceholders(kicked, sender.getName(), null, reason_string);
+        confirm = MessageFormatter.replacePlaceholders(confirm, sender.getName(), null, reason_string);
+        info = MessageFormatter.replacePlaceholders(info, sender.getName(), null, reason_string);
 
         boolean success = false;
         for (ProxiedPlayer player : Main.getInstance().getProxy().getPlayers()) {
