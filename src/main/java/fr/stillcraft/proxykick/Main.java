@@ -46,8 +46,7 @@ public final class Main extends Plugin {
         try {
             // Load config file
             config = getInstance().getConfig("config");
-            String locale_string = config.getString("locale");
-            locale = getInstance().getConfig("locales/locale_" + locale_string);
+            locale = getInstance().getConfig("locales/locale_" + resolveLocale());
 
             // Register new commands
             getProxy().getPluginManager().registerCommand(this, new help());
@@ -67,6 +66,25 @@ public final class Main extends Plugin {
     }
 
     public static Main getInstance() { return instance; }
+
+    // Reads config's "locale" value and falls back to "en" if it doesn't match a supported locale file.
+    public static String resolveLocale() {
+        String locale_string = config.getString("locale");
+        if (!locale_string.equals("en") && !locale_string.equals("fr")) {
+            Main.getInstance().getLogger().warning("Unknown locale '" + locale_string + "' in config.yml, falling back to 'en'.");
+            locale_string = "en";
+        }
+        return locale_string;
+    }
+
+    // Stores a config value with the correct type: real Boolean for "true"/"false", raw String otherwise.
+    private static void setConfigValue(Configuration config, String key, String value) {
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+            config.set(key, Boolean.parseBoolean(value));
+        } else {
+            config.set(key, value);
+        }
+    }
 
     public static void checkConfig(String fileName) {
         if(!Main.getInstance().getDataFolder().exists()){
@@ -90,8 +108,7 @@ public final class Main extends Plugin {
                 if (fileName.equals("config")) {
                     for (String config_key : config_keys) {
                         String temp_str = Main.getInstance().defaultConfig(config_key, fileName);
-                        if (Boolean.parseBoolean(temp_str)) config.set(config_key, Boolean.parseBoolean(temp_str));
-                        else config.set(config_key, temp_str);
+                        setConfigValue(config, config_key, temp_str);
                     }
                 }
                 // Save configuration
@@ -141,8 +158,7 @@ public final class Main extends Plugin {
                         if (config.getString(config_key).isEmpty()) {
                             // Handle Boolean types
                             String temp_str = Main.getInstance().defaultConfig(config_key, fileName);
-                            if (Boolean.parseBoolean(temp_str)) config.set(config_key, Boolean.parseBoolean(temp_str));
-                            else config.set(config_key, temp_str);
+                            setConfigValue(config, config_key, temp_str);
                             save_config = true;
                         }
                     }

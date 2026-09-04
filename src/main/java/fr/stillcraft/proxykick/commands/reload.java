@@ -40,8 +40,7 @@ public class reload extends Command implements TabExecutor {
         try {
             // Reload config file
             Main.config = Main.getInstance().getConfig("config");
-            String locale_string = Main.config.getString("locale");
-            Main.locale = Main.getInstance().getConfig("locales/locale_" + locale_string);
+            Main.locale = Main.getInstance().getConfig("locales/locale_" + Main.resolveLocale());
 
             String success = Main.locale.getString("global.prefix")+" "+Main.locale.getString("reload.success");
             success = ChatColor.translateAlternateColorCodes('&', success);

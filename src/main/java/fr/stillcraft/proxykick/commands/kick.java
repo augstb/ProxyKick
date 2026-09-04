@@ -64,7 +64,7 @@ public class kick extends Command implements TabExecutor {
 
             // Loop over players
             for (ProxiedPlayer player : Main.getInstance().getProxy().getPlayers()) {
-                if (args[0].equalsIgnoreCase(player.getDisplayName())) {
+                if (args[0].equalsIgnoreCase(player.getName())) {
 
                     // Construct complete kick strings
                     StringBuilder stringBuilder = new StringBuilder();
@@ -86,17 +86,17 @@ public class kick extends Command implements TabExecutor {
                     }
 
                     // Parse placeholders
-                    bypass_warn = bypass_warn.replaceAll("%sender%", sender.getName());
-                    kicked = kicked.replaceAll("%sender%", sender.getName());
-                    confirm = confirm.replaceAll("%sender%", sender.getName());
-                    info = info.replaceAll("%sender%", sender.getName());
-                    kicked = kicked.replaceAll("%reason%", reason_string);
-                    confirm = confirm.replaceAll("%reason%", reason_string);
-                    info = info.replaceAll("%reason%", reason_string);
-                    bypass = bypass.replaceAll("%player%", player.getDisplayName());
-                    kicked = kicked.replaceAll("%player%", player.getDisplayName());
-                    confirm = confirm.replaceAll("%player%", player.getDisplayName());
-                    info = info.replaceAll("%player%", player.getDisplayName());
+                    bypass_warn = bypass_warn.replace("%sender%", sender.getName());
+                    kicked = kicked.replace("%sender%", sender.getName());
+                    confirm = confirm.replace("%sender%", sender.getName());
+                    info = info.replace("%sender%", sender.getName());
+                    kicked = kicked.replace("%reason%", reason_string);
+                    confirm = confirm.replace("%reason%", reason_string);
+                    info = info.replace("%reason%", reason_string);
+                    bypass = bypass.replace("%player%", player.getDisplayName());
+                    kicked = kicked.replace("%player%", player.getDisplayName());
+                    confirm = confirm.replace("%player%", player.getDisplayName());
+                    info = info.replace("%player%", player.getDisplayName());
 
                     // If player has bypass do not kick and warn player AND
                     // If sender is a player (CONSOLE and Rcon are not concerned)
@@ -122,7 +122,7 @@ public class kick extends Command implements TabExecutor {
                 }
             }
             // Player not found, send message to sender
-            offline = offline.replaceAll("%player%", args[0]);
+            offline = offline.replace("%player%", args[0]);
             sender.sendMessage(new TextComponent(offline));
 
         } else {

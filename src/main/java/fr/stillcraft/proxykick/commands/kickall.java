@@ -70,12 +70,12 @@ public class kickall extends Command implements TabExecutor {
         }
 
         // Parse placeholders
-        kicked = kicked.replaceAll("%sender%", sender.getName());
-        confirm = confirm.replaceAll("%sender%", sender.getName());
-        info = info.replaceAll("%sender%", sender.getName());
-        kicked = kicked.replaceAll("%reason%", reason_string);
-        confirm = confirm.replaceAll("%reason%", reason_string);
-        info = info.replaceAll("%reason%", reason_string);
+        kicked = kicked.replace("%sender%", sender.getName());
+        confirm = confirm.replace("%sender%", sender.getName());
+        info = info.replace("%sender%", sender.getName());
+        kicked = kicked.replace("%reason%", reason_string);
+        confirm = confirm.replace("%reason%", reason_string);
+        info = info.replace("%reason%", reason_string);
 
         boolean success = false;
         for (ProxiedPlayer player : Main.getInstance().getProxy().getPlayers()) {
