@@ -50,6 +50,8 @@ public final class VelocityMain {
         commandManager.register(commandManager.metaBuilder("proxykick:reload").plugin(this).build(), new ReloadCommand(this));
         commandManager.register(commandManager.metaBuilder("proxykick:version").aliases("proxykick:info").plugin(this).build(), new VersionCommand(this));
         commandManager.register(commandManager.metaBuilder("proxykick").aliases("pk").plugin(this).build(), new ProxyKickCommand(this));
+
+        logger.info("Enabled plugin ProxyKick version " + ProxyKickConfig.VERSION + " by Augustin Blanchet");
     }
 
     public static VelocityMain getInstance() { return instance; }

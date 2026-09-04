@@ -40,6 +40,22 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <!-- Velocity (unlike BungeeCord) loads plugin classes parent-first for
+                                 third-party libraries, so it prefers its own bundled SnakeYAML over
+                                 ours - an incompatible newer version, causing a NoSuchMethodError on
+                                 org.yaml.snakeyaml.representer.Representer's no-arg constructor.
+                                 Relocating our shaded copies to a private package makes that class
+                                 of collision impossible regardless of what the host proxy bundles. -->
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.yaml.snakeyaml</pattern>
+                                    <shadedPattern>fr.stillcraft.proxykick.libs.snakeyaml</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.common</pattern>
+                                    <shadedPattern>fr.stillcraft.proxykick.libs.guava</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
