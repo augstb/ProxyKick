@@ -93,20 +93,24 @@
             <version>3.4.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Standalone YAML config lib (no BungeeCord runtime dependency) shaded into the jar so
-             config/locale loading works identically on both BungeeCord and Velocity. -->
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-config</artifactId>
-            <version>1.16-R0.5-SNAPSHOT</version>
-        </dependency>
-        <!-- bungeecord-config declares these as optional, so they aren't inherited transitively.
-             BungeeCord always has SnakeYAML on its own classpath, but Velocity doesn't, so it must
-             be declared (and shaded) explicitly or config loading throws NoClassDefFoundError there. -->
+        <!-- Config/locale files are loaded through our own YamlDocument/YamlStore (core package)
+             rather than net.md_5.bungee.config.YamlConfiguration, which always builds its Yaml
+             with a plain, unsafe Constructor (CVE-2022-1471). Depend on SnakeYAML directly so we
+             control that choice, and shade+relocate it (see relocations above) so it works the
+             same regardless of what version the host proxy happens to bundle. -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.27</version>
+            <version>2.5</version>
+        </dependency>
+        <!-- Our commands use com.google.common.collect.ImmutableSet directly. Both proxies bundle
+             some (differing) Guava version transitively, but relying on that ambient copy risks
+             the same kind of API-mismatch crash SnakeYAML just had - declare and shade+relocate
+             our own instead so it's fully self-contained on both platforms. -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>33.6.0-jre</version>
         </dependency>
     </dependencies>
 </project>

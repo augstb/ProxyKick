@@ -1,17 +1,13 @@
 package fr.stillcraft.proxykick.core;
 
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
- * Loads and migrates ProxyKick's config.yml and locale files. Built on the standalone
- * net.md-5:bungeecord-config YAML library (no dependency on the BungeeCord proxy runtime),
- * so this same class is shared verbatim by the BungeeCord and Velocity entry points.
+ * Loads and migrates ProxyKick's config.yml and locale files. Built on YamlDocument/YamlStore
+ * (a minimal wrapper around SnakeYAML with a safe Constructor - no dependency on the BungeeCord
+ * proxy runtime), so this same class is shared verbatim by the BungeeCord and Velocity entry points.
  */
 public final class ProxyKickConfig {
     // Version (don't forget to increment)
@@ -41,8 +37,8 @@ public final class ProxyKickConfig {
     private final File dataFolder;
     private final Consumer<String> warningLogger;
 
-    public Configuration config;
-    public Configuration locale;
+    public YamlDocument config;
+    public YamlDocument locale;
 
     public ProxyKickConfig(File dataFolder, Consumer<String> warningLogger) {
         this.dataFolder = dataFolder;
@@ -77,7 +73,7 @@ public final class ProxyKickConfig {
     }
 
     // Stores a config value with the correct type: real Boolean for "true"/"false", raw String otherwise.
-    private static void setConfigValue(Configuration config, String key, String value) {
+    private static void setConfigValue(YamlDocument config, String key, String value) {
         if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
             config.set(key, Boolean.parseBoolean(value));
         } else {
@@ -96,7 +92,7 @@ public final class ProxyKickConfig {
                 // Initialize configuration
                 file.getParentFile().mkdirs();
                 file.createNewFile();
-                Configuration config = getConfig(fileName);
+                YamlDocument config = getConfig(fileName);
 
                 // Writing default config values
                 if (fileName.equals("locales/locale_en") || fileName.equals("locales/locale_fr")) {
@@ -113,7 +109,7 @@ public final class ProxyKickConfig {
                 // Save configuration
                 saveConfig(config, fileName);
             } else { // Check config data (add keys if does not exists)
-                Configuration config = getConfig(fileName);
+                YamlDocument config = getConfig(fileName);
                 if (fileName.equals("locales/locale_en") || fileName.equals("locales/locale_fr")) {
                     for (int i=0; i<locale_keys.length; i++){                                   // browse locale keys ...
                         if (!locale_keys[i].equals("global.version")) {                         // if not global.version key
@@ -251,11 +247,11 @@ public final class ProxyKickConfig {
         return "";
     }
 
-    public Configuration getConfig(String fileName) throws IOException {
-        return ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(dataFolder, fileName+".yml"));
+    public YamlDocument getConfig(String fileName) throws IOException {
+        return YamlStore.load(new File(dataFolder, fileName+".yml"));
     }
 
-    public void saveConfig(Configuration config, String fileName) throws IOException {
-        ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, new File(dataFolder, fileName+".yml"));
+    public void saveConfig(YamlDocument config, String fileName) throws IOException {
+        YamlStore.save(config, new File(dataFolder, fileName+".yml"));
     }
 }
